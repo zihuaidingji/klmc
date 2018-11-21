@@ -38,6 +38,6 @@ for face_landmarks in face_landmarks_list:
         face_landmarks['right_eye'] + [face_landmarks['right_eye'][0]],
         fill=(0, 0, 0, 110),
         width=1)
-
+    #显示图片
 pil_image.show()
 pil_image.save('test1.bmp','bmp')
