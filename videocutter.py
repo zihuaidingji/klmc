@@ -481,7 +481,7 @@ class VideoCutter(QWidget):
             keep_open='always',
             idle=True,
             osd_font=self._osdfont,
-            osd_level=3,
+            osd_level=0,
             osd_align_x='left',
             osd_align_y='top',
             cursor_autohide=False,
@@ -1677,7 +1677,7 @@ class VideoCutter(QWidget):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaAvailable:
 
-            if event.key() == Qt.Key_Space:
+            if event.key() in {Qt.Key_Space, Qt.Key_P}: #xn: add Key_P 
                 self.playMedia()
                 return
 
@@ -1685,8 +1685,14 @@ class VideoCutter(QWidget):
                 self.toggleFullscreen()
                 return
 
-            if event.key() == Qt.Key_F:
+            if event.key() in {Qt.Key_F}:  
                 self.toggleFullscreen()
+                return
+
+            #xn: add Key_P for pause, O for OSD, [] for speed up or down
+            #xn: ;' for smaller or bigger
+            if event.key() == Qt.Key_O: 
+                self.toggleOSD(self.enableOSD)
                 return
 
             if event.key() == Qt.Key_Home:
