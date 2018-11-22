@@ -152,16 +152,16 @@ class VideoCutter(QWidget):
         self.listHeaderButtonL.clicked.connect(self.setClipIndexLayout)
         self.listHeaderButtonL.setCursor(Qt.PointingHandCursor)
         self.listHeaderButtonL.setFixedSize(14, 14)
-        self.listHeaderButtonL.setToolTip('Move to left')
-        self.listHeaderButtonL.setStatusTip('Move the Clip Index list to the left side of player')
+        self.listHeaderButtonL.setToolTip('向左移动')
+        self.listHeaderButtonL.setStatusTip('将剪辑索引列表移到播放器的左侧')
         self.listHeaderButtonR = QPushButton(self)
         self.listHeaderButtonR.setObjectName('listheaderbutton-right')
         self.listHeaderButtonR.setFlat(True)
         self.listHeaderButtonR.clicked.connect(self.setClipIndexLayout)
         self.listHeaderButtonR.setCursor(Qt.PointingHandCursor)
         self.listHeaderButtonR.setFixedSize(14, 14)
-        self.listHeaderButtonR.setToolTip('Move to right')
-        self.listHeaderButtonR.setStatusTip('Move the Clip Index list to the right side of player')
+        self.listHeaderButtonR.setToolTip('向右移动')
+        self.listHeaderButtonR.setStatusTip('将剪辑索引列表移到播放器的右侧')
         listheaderLayout = QHBoxLayout()
         listheaderLayout.setContentsMargins(6, 5, 6, 5)
         listheaderLayout.addWidget(self.listHeaderButtonL)
@@ -175,20 +175,20 @@ class VideoCutter(QWidget):
 
         self.runtimeLabel = QLabel('<div align="right">00:00:00</div>', self)
         self.runtimeLabel.setObjectName('runtimeLabel')
-        self.runtimeLabel.setToolTip('total runtime: 00:00:00')
-        self.runtimeLabel.setStatusTip('total running time: 00:00:00')
+        self.runtimeLabel.setToolTip('总运行时间: 00:00:00')
+        self.runtimeLabel.setStatusTip('总运行时间: 00:00:00')
 
         self.clipindex_add = QPushButton(self)
         self.clipindex_add.setObjectName('clipadd')
         self.clipindex_add.clicked.connect(self.addExternalClips)
-        self.clipindex_add.setToolTip('Add clips')
-        self.clipindex_add.setStatusTip('Add one or more files to an existing project or an empty list if you are only '
-                                        'joining files')
+        self.clipindex_add.setToolTip('添加剪辑')
+        self.clipindex_add.setStatusTip('仅在现有项目或空列表中添加一个或多个文件 '
+                                        '加入文件')
         self.clipindex_add.setCursor(Qt.PointingHandCursor)
         self.clipindex_remove = QPushButton(self)
         self.clipindex_remove.setObjectName('clipremove')
-        self.clipindex_remove.setToolTip('Remove clips')
-        self.clipindex_remove.setStatusTip('Remove clips from your index')
+        self.clipindex_remove.setToolTip('删除剪辑')
+        self.clipindex_remove.setStatusTip('从索引中删除剪辑')
         self.clipindex_remove.setLayoutDirection(Qt.RightToLeft)
         self.clipindex_remove.setMenu(self.clipindex_removemenu)
         self.clipindex_remove.setCursor(Qt.PointingHandCursor)
@@ -267,8 +267,8 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.thumbnailsButton = QPushButton(self, flat=True, checkable=True, objectName='thumbnailsButton',
-                                            statusTip='Toggle timeline thumbnails', cursor=Qt.PointingHandCursor,
-                                            toolTip='Toggle thumbnails')
+                                            statusTip='切换时间轴缩略图', cursor=Qt.PointingHandCursor,
+                                            toolTip='切换缩略图')
         self.thumbnailsButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
         self.thumbnailsButton.setChecked(self.timelineThumbs)
         self.thumbnailsButton.toggled.connect(self.toggleThumbs)
@@ -277,14 +277,14 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.osdButton = QPushButton(self, flat=True, checkable=True, objectName='osdButton', toolTip='Toggle OSD',
-                                     statusTip='Toggle on-screen display', cursor=Qt.PointingHandCursor)
+                                     statusTip='切换屏幕显示', cursor=Qt.PointingHandCursor)
         self.osdButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
         self.osdButton.setChecked(self.enableOSD)
         self.osdButton.toggled.connect(self.toggleOSD)
 
         # noinspection PyArgumentList
         self.consoleButton = QPushButton(self, flat=True, checkable=True, objectName='consoleButton',
-                                         statusTip='Toggle console window', toolTip='Toggle console',
+                                         statusTip='切换控制台窗口', toolTip='切换控制台',
                                          cursor=Qt.PointingHandCursor)
         self.consoleButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
         self.consoleButton.setChecked(self.showConsole)
@@ -296,7 +296,7 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.chaptersButton = QPushButton(self, flat=True, checkable=True, objectName='chaptersButton',
-                                          statusTip='Automatically create chapters per clip', toolTip='Create chapters',
+                                          statusTip='自动创建每个剪辑章节', toolTip='创建章节',
                                           cursor=Qt.PointingHandCursor)
         self.chaptersButton.setFixedSize(31, 29 if self.theme == 'dark' else 31)
         self.chaptersButton.setChecked(self.createChapters)
@@ -304,50 +304,50 @@ class VideoCutter(QWidget):
 
         # noinspection PyArgumentList
         self.smartcutButton = QPushButton(self, flat=True, checkable=True, objectName='smartcutButton',
-                                          toolTip='Toggle SmartCut', statusTip='Toggle frame accurate cutting',
+                                          toolTip='切换智能剪辑', statusTip='切换精准剪辑',
                                           cursor=Qt.PointingHandCursor)
         self.smartcutButton.setFixedSize(32, 29 if self.theme == 'dark' else 31)
         self.smartcutButton.setChecked(self.smartcut)
         self.smartcutButton.toggled.connect(self.toggleSmartCut)
 
         # noinspection PyArgumentList
-        self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='Mute',
-                                      statusTip='Toggle audio mute', iconSize=QSize(16, 16), clicked=self.muteAudio,
+        self.muteButton = QPushButton(objectName='muteButton', icon=self.unmuteIcon, flat=True, toolTip='静音',
+                                      statusTip='切换音频至静音', iconSize=QSize(16, 16), clicked=self.muteAudio,
                                       cursor=Qt.PointingHandCursor)
 
         # noinspection PyArgumentList
-        self.volSlider = VCVolumeSlider(orientation=Qt.Horizontal, toolTip='Volume', statusTip='Adjust volume level',
+        self.volSlider = VCVolumeSlider(orientation=Qt.Horizontal, toolTip='音量', statusTip='调节音量',
                                         cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
                                         maximum=130, minimumHeight=22, sliderMoved=self.setVolume)
 
         # noinspection PyArgumentList
         self.fullscreenButton = QPushButton(objectName='fullscreenButton', icon=self.fullscreenIcon, flat=True,
-                                            toolTip='Toggle fullscreen', statusTip='Switch to fullscreen video',
+                                            toolTip='切换全屏', statusTip='切换到全屏视频',
                                             iconSize=QSize(14, 14), clicked=self.toggleFullscreen,
                                             cursor=Qt.PointingHandCursor, enabled=False)
 
         # noinspection PyArgumentList
-        self.settingsButton = QPushButton(self, toolTip='Settings', cursor=Qt.PointingHandCursor, flat=True,
-                                          statusTip='Configure application settings',
+        self.settingsButton = QPushButton(self, toolTip='设置', cursor=Qt.PointingHandCursor, flat=True,
+                                          statusTip='配置应用程序设置',
                                           objectName='settingsButton', clicked=self.showSettings)
         self.settingsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
-        self.streamsButton = QPushButton(self, toolTip='Media streams', cursor=Qt.PointingHandCursor, flat=True,
-                                         statusTip='Select the media streams to be included',
+        self.streamsButton = QPushButton(self, toolTip='媒体流', cursor=Qt.PointingHandCursor, flat=True,
+                                         statusTip='选择要饮食的媒体流',
                                          objectName='streamsButton', clicked=self.selectStreams,
                                          enabled=False)
         self.streamsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
-        self.mediainfoButton = QPushButton(self, toolTip='Media information', cursor=Qt.PointingHandCursor, flat=True,
-                                           statusTip='View technical details about current media',
+        self.mediainfoButton = QPushButton(self, toolTip='媒体信息', cursor=Qt.PointingHandCursor, flat=True,
+                                           statusTip='查看当前媒体文件的技术信息详情',
                                            objectName='mediainfoButton', clicked=self.mediaInfo, enabled=False)
         self.mediainfoButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
-        self.menuButton = QPushButton(self, toolTip='Menu', cursor=Qt.PointingHandCursor, flat=True,
-                                      objectName='menuButton', clicked=self.showAppMenu, statusTip='View menu options')
+        self.menuButton = QPushButton(self, toolTip='菜单', cursor=Qt.PointingHandCursor, flat=True,
+                                      objectName='menuButton', clicked=self.showAppMenu, statusTip='查看菜单选项')
         self.menuButton.setFixedSize(QSize(33, 32))
 
         audioLayout = QHBoxLayout()
@@ -358,19 +358,19 @@ class VideoCutter(QWidget):
         audioLayout.addSpacing(5)
         audioLayout.addWidget(self.fullscreenButton)
 
-        self.toolbar_open = VCToolBarButton('Open Media', 'Open and load a media file to begin', parent=self)
+        self.toolbar_open = VCToolBarButton('open 打开', '打开并加载媒体文件', parent=self)
         self.toolbar_open.clicked.connect(self.openMedia)
-        self.toolbar_play = VCToolBarButton('Play Media', 'Play currently loaded media file', parent=self)
+        self.toolbar_play = VCToolBarButton('Play 播放', '播放当前加载的媒体文件', parent=self)
         self.toolbar_play.setEnabled(False)
         self.toolbar_play.clicked.connect(self.playMedia)
-        self.toolbar_start = VCToolBarButton('Start Clip', 'Start a new clip from the current timeline position',
+        self.toolbar_start = VCToolBarButton('Start 开始剪辑', '从当前时间线位置开始前剪辑',
                                              parent=self)
         self.toolbar_start.setEnabled(False)
         self.toolbar_start.clicked.connect(self.clipStart)
-        self.toolbar_end = VCToolBarButton('End Clip', 'End a new clip at the current timeline position', parent=self)
+        self.toolbar_end = VCToolBarButton('End 停止剪辑', '在当前时间线位置结束新剪辑', parent=self)
         self.toolbar_end.setEnabled(False)
         self.toolbar_end.clicked.connect(self.clipEnd)
-        self.toolbar_save = VCToolBarButton('Save Media', 'Save clips to a new media file', parent=self)
+        self.toolbar_save = VCToolBarButton('Save 保存', '将剪辑保存到新的媒体文件', parent=self)
         self.toolbar_save.setObjectName('savebutton')
         self.toolbar_save.setEnabled(False)
         self.toolbar_save.clicked.connect(self.saveMedia)
@@ -467,21 +467,18 @@ class VideoCutter(QWidget):
 
     def getMPV(self, parent: QWidget=None, file: str=None, start: float=0, pause: bool=True, mute: bool=False,
                volume: int=None) -> mpvWidget:
-        widget = vidcutter.libs.mpvwidget.mpvWidget(
+        widget = mpvWidget(
             parent=parent,
             file=file,
-
             #xn gpu for windows:vo='opengl-cb',
             vo='gpu',
-            #speed=100,
-            
             pause=pause,
             start=start,
             mute=mute,
             keep_open='always',
             idle=True,
             osd_font=self._osdfont,
-            osd_level=3,
+            osd_level=0,
             osd_align_x='left',
             osd_align_y='top',
             cursor_autohide=False,
@@ -495,7 +492,7 @@ class VideoCutter(QWidget):
             audio_file_auto=False,
             quiet=True,
             volume=volume if volume is not None else self.parent.startupvol,
-            #xn:opengl_pbo=self.enablePBO,
+            #opengl_pbo=self.enablePBO,
             keepaspect=self.keepRatio,
             hwdec=('auto' if self.hardwareDecoding else 'no'))
         widget.durationChanged.connect(self.on_durationChanged)
@@ -506,7 +503,7 @@ class VideoCutter(QWidget):
         self.novideoWidget = QWidget(self)
         self.novideoWidget.setObjectName('novideoWidget')
         self.novideoWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        openmediaLabel = VCBlinkText('open media to begin', self)
+        openmediaLabel = VCBlinkText('打开媒体文件体验吧！', self)
         openmediaLabel.setAlignment(Qt.AlignHCenter)
         _version = 'v{}'.format(qApp.applicationVersion())
         if self.parent.flatpak:
@@ -550,50 +547,50 @@ class VideoCutter(QWidget):
 
     # noinspection PyArgumentList
     def _initActions(self) -> None:
-        self.moveItemUpAction = QAction(self.upIcon, 'Move clip up', self, statusTip='Move clip position up in list',
+        self.moveItemUpAction = QAction(self.upIcon, '向上移动剪辑', self, statusTip='在列表中向上移动剪辑位置',
                                         triggered=self.moveItemUp, enabled=False)
-        self.moveItemDownAction = QAction(self.downIcon, 'Move clip down', self, triggered=self.moveItemDown,
-                                          statusTip='Move clip position down in list', enabled=False)
-        self.removeItemAction = QAction(self.removeIcon, 'Remove selected clip', self, triggered=self.removeItem,
-                                        statusTip='Remove selected clip from list', enabled=False)
-        self.removeAllAction = QAction(self.removeAllIcon, 'Remove all clips', self, triggered=self.clearList,
-                                       statusTip='Remove all clips from list', enabled=False)
-        self.editChapterAction = QAction(self.chapterIcon, 'Edit chapter name', self, triggered=self.editChapter,
-                                         statusTip='Edit the selected chapter name', enabled=False)
-        self.streamsAction = QAction(self.streamsIcon, 'Media streams', self, triggered=self.selectStreams,
-                                     statusTip='Select the media streams to be included', enabled=False)
-        self.mediainfoAction = QAction(self.mediaInfoIcon, 'Media information', self, triggered=self.mediaInfo,
-                                       statusTip='View technical details about current media', enabled=False)
-        self.openProjectAction = QAction(self.openProjectIcon, 'Open project file', self, triggered=self.openProject,
-                                         statusTip='Open a previously saved project file (*.vcp or *.edl)',
+        self.moveItemDownAction = QAction(self.downIcon, '向下移动剪辑', self, triggered=self.moveItemDown,
+                                          statusTip='在列表中向下移动剪辑位置', enabled=False)
+        self.removeItemAction = QAction(self.removeIcon, '删除选定的剪辑', self, triggered=self.removeItem,
+                                        statusTip='从列表中删除选定的剪辑', enabled=False)
+        self.removeAllAction = QAction(self.removeAllIcon, '删除所有剪辑', self, triggered=self.clearList,
+                                       statusTip='从列表中删除所有剪辑 ', enabled=False)
+        self.editChapterAction = QAction(self.chapterIcon, '编辑章节名称', self, triggered=self.editChapter,
+                                         statusTip='编辑选定的章节名称 ', enabled=False)
+        self.streamsAction = QAction(self.streamsIcon, '媒体流', self, triggered=self.selectStreams,
+                                     statusTip='选择要包含的媒体流 ', enabled=False)
+        self.mediainfoAction = QAction(self.mediaInfoIcon, '媒体信息', self, triggered=self.mediaInfo,
+                                       statusTip='查看当前媒体文件的技术信息详情', enabled=False)
+        self.openProjectAction = QAction(self.openProjectIcon, '打开项目文件 ', self, triggered=self.openProject,
+                                         statusTip='打开之前保存的项目文件 (*.vcp or *.edl)',
                                          enabled=True)
-        self.saveProjectAction = QAction(self.saveProjectIcon, 'Save project file', self, triggered=self.saveProject,
-                                         statusTip='Save current work to a project file (*.vcp or *.edl)',
+        self.saveProjectAction = QAction(self.saveProjectIcon, '保存项目文件', self, triggered=self.saveProject,
+                                         statusTip='将当前工作保存到项目文件中 (*.vcp or *.edl)',
                                          enabled=False)
-        self.changelogAction = QAction(self.changelogIcon, 'View changelog', self, triggered=self.viewChangelog,
-                                       statusTip='View log of changes')
-        self.viewLogsAction = QAction(self.viewLogsIcon, 'View log file', self, triggered=VideoCutter.viewLogs,
-                                      statusTip='View the application\'s log file')
-        self.updateCheckAction = QAction(self.updateCheckIcon, 'Check for updates...', self,
-                                         statusTip='Check for application updates', triggered=self.updater.check)
-        self.aboutQtAction = QAction('About Qt', self, triggered=qApp.aboutQt, statusTip='About Qt')
+        self.changelogAction = QAction(self.changelogIcon, '查看变更日志', self, triggered=self.viewChangelog,
+                                       statusTip='查看日志变更信息')
+        self.viewLogsAction = QAction(self.viewLogsIcon, '查看日志文件', self, triggered=VideoCutter.viewLogs,
+                                      statusTip='查看应用程序的日志文件')
+        self.updateCheckAction = QAction(self.updateCheckIcon, '检查更新...', self,
+                                         statusTip='检查应用程序更新', triggered=self.updater.check)
+        self.aboutQtAction = QAction('关于 Qt', self, triggered=qApp.aboutQt, statusTip='关于 Qt')
         self.aboutAction = QAction('About {}'.format(qApp.applicationName()), self, triggered=self.aboutApp,
                                    statusTip='About {}'.format(qApp.applicationName()))
-        self.keyRefAction = QAction(self.keyRefIcon, 'Keyboard shortcuts', self, triggered=self.showKeyRef,
-                                    statusTip='View shortcut key bindings')
-        self.settingsAction = QAction(self.settingsIcon, 'Settings', self, triggered=self.showSettings,
-                                      statusTip='Configure application settings')
-        self.fullscreenAction = QAction(self.fullscreenIcon, 'Toggle fullscreen', self, triggered=self.toggleFullscreen,
-                                        statusTip='Toggle fullscreen display mode', enabled=False)
-        self.quitAction = QAction(self.quitIcon, 'Quit', self, triggered=self.parent.close,
-                                  statusTip='Quit the application')
+        self.keyRefAction = QAction(self.keyRefIcon, '键盘快捷键 ', self, triggered=self.showKeyRef,
+                                    statusTip='查看快捷键绑定 ')
+        self.settingsAction = QAction(self.settingsIcon, '设置', self, triggered=self.showSettings,
+                                      statusTip='配置应用程序设置')
+        self.fullscreenAction = QAction(self.fullscreenIcon, '切换全屏', self, triggered=self.toggleFullscreen,
+                                        statusTip='切换全屏显示模式', enabled=False)
+        self.quitAction = QAction(self.quitIcon, '退出', self, triggered=self.parent.close,
+                                  statusTip='退出应用程序')
 
     @property
     def _filtersMenu(self) -> QMenu:
         menu = QMenu('Video filters', self)
         self.blackdetectAction = VCFilterMenuAction(QPixmap(':/images/blackdetect.png'), 'BLACKDETECT',
                                                     'Create clips via black frame detection',
-                                                    'Useful for skipping commercials or detecting scene transitions',
+                                                    '有助于跳过广告或检测场景转换',
                                                     self)
         if sys.platform == 'darwin':
             self.blackdetectAction.triggered.connect(lambda: self.configFilters(VideoFilter.BLACKDETECT),
@@ -685,8 +682,8 @@ class VideoCutter(QWidget):
 
     def setRunningTime(self, runtime: str) -> None:
         self.runtimeLabel.setText('<div align="right">{}</div>'.format(runtime))
-        self.runtimeLabel.setToolTip('total runtime: {}'.format(runtime))
-        self.runtimeLabel.setStatusTip('total running time: {}'.format(runtime))
+        self.runtimeLabel.setToolTip('总运行时间: {}'.format(runtime))
+        self.runtimeLabel.setStatusTip('总运行时间: {}'.format(runtime))
 
     def getFileDialogOptions(self) -> QFileDialog.Options:
         options = QFileDialog.HideNameFilterDetails
@@ -730,7 +727,7 @@ class VideoCutter(QWidget):
         index = self.cliplist.currentRow()
         name = self.clipTimes[index][4]
         name = name if name is not None else 'Chapter {}'.format(index + 1)
-        dialog = VCInputDialog(self, 'Edit chapter name', 'Chapter name:', name)
+        dialog = VCInputDialog(self, '编辑章节名称', '章节名称:', name)
         dialog.accepted.connect(lambda: self.on_editChapter(index, dialog.input.text()))
         dialog.exec_()
 
@@ -744,7 +741,7 @@ class VideoCutter(QWidget):
             tmpItem = self.clipTimes[index]
             del self.clipTimes[index]
             self.clipTimes.insert(index - 1, tmpItem)
-            self.showText('clip moved up')
+            self.showText('剪辑向上移动')
             self.renderClipIndex()
 
     def moveItemDown(self) -> None:
@@ -753,7 +750,7 @@ class VideoCutter(QWidget):
             tmpItem = self.clipTimes[index]
             del self.clipTimes[index]
             self.clipTimes.insert(index + 1, tmpItem)
-            self.showText('clip moved down')
+            self.showText('剪辑向下移动')
             self.renderClipIndex()
 
     def removeItem(self) -> None:
@@ -766,13 +763,13 @@ class VideoCutter(QWidget):
             self.initMediaControls(False)
         del self.clipTimes[index]
         self.cliplist.takeItem(index)
-        self.showText('clip removed')
+        self.showText('删除剪辑')
         self.renderClipIndex()
 
     def clearList(self) -> None:
         self.clipTimes.clear()
         self.cliplist.clear()
-        self.showText('all clips cleared')
+        self.showText('清除所有剪辑')
         if self.mediaAvailable:
             self.inCut = False
             self.initMediaControls(True)
@@ -805,7 +802,7 @@ class VideoCutter(QWidget):
                 return
         filename, _ = QFileDialog.getOpenFileName(
             parent=self.parent,
-            caption='Open media file',
+            caption='打开媒体文件',
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
             directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
@@ -826,7 +823,7 @@ class VideoCutter(QWidget):
         if project_file is None:
             project_file, _ = QFileDialog.getOpenFileName(
                 parent=self.parent,
-                caption='Open project file',
+                caption='打开项目文件',
                 filter=self.projectFilters(),
                 initialFilter=initialFilter,
                 directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
@@ -838,8 +835,8 @@ class VideoCutter(QWidget):
             info = QFileInfo(file)
             project_type = info.suffix()
             if not file.open(QFile.ReadOnly | QFile.Text):
-                QMessageBox.critical(self.parent, 'Open project file',
-                                     'Cannot read project file {0}:\n\n{1}'.format(project_file, file.errorString()))
+                QMessageBox.critical(self.parent, '打开项目文件',
+                                     '无法读取项目文件 {0}:\n\n{1}'.format(project_file, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
             self.clipTimes.clear()
@@ -852,11 +849,10 @@ class VideoCutter(QWidget):
                         line = line.data().decode()
                     except UnicodeDecodeError:
                         qApp.restoreOverrideCursor()
-                        self.logger.error('Invalid project file was selected', exc_info=True)
-                        sys.stderr.write('Invalid project file was selected')
-                        QMessageBox.critical(self.parent, 'Invalid project file',
-                                             'Could not make sense of the selected project file. Try viewing it in a '
-                                             'text editor to ensure it is valid and not corrupted.')
+                        self.logger.error('选择的是无效的项目文件', exc_info=True)
+                        sys.stderr.write('选择的是无效的项目文件')
+                        QMessageBox.critical(self.parent, '无效的项目文件',
+                                             '无法识别所选项目文件，请尝试在文本编辑器中查看此文件，以确保其有效且无无损坏。')
                         return
                     if project_type == 'vcp' and linenum == 1:
                         self.loadMedia(line)
@@ -877,7 +873,7 @@ class VideoCutter(QWidget):
                             self.clipTimes.append([clip_start, clip_end, clip_image, '', chapter])
                         else:
                             qApp.restoreOverrideCursor()
-                            QMessageBox.critical(self.parent, 'Invalid project file',
+                            QMessageBox.critical(self.parent, '无效的项目文件',
                                                  'Invalid entry at line {0}:\n\n{1}'.format(linenum, line))
                             return
                 linenum += 1
@@ -890,7 +886,7 @@ class VideoCutter(QWidget):
             QTimer.singleShot(2000, self.selectClip)
             qApp.restoreOverrideCursor()
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
-                self.showText('project loaded')
+                self.showText('项目加载')
 
     def saveProject(self, reboot: bool = False) -> None:
         if self.currentMedia is None:
@@ -913,16 +909,16 @@ class VideoCutter(QWidget):
                 </style>
                 <table border="0" cellpadding="6" cellspacing="0" width="350">
                     <tr>
-                        <td><h2>Cannot save your current project</h2></td>
+                        <td><h2>无法保存当前文件</h2></td>
                     </tr>
                     <tr>
                         <td>
-                            <p>Cannot save project containing external media files. Remove
-                            all media files you have externally added and try again.</p>
+                            <p>无法保存包含外部媒体文件的项目，删除所有外部添加的媒体
+                            文件，然后再试一次。</p>
                         </td>
                     </tr>
                 </table>'''.format(**locals())
-            nosave = QMessageBox(QMessageBox.Critical, 'Cannot save project', nosavetext, parent=self.parent)
+            nosave = QMessageBox(QMessageBox.Critical, '无法保存项目', nosavetext, parent=self.parent)
             nosave.setStandardButtons(QMessageBox.Ok)
             nosave.exec_()
             return
@@ -933,7 +929,7 @@ class VideoCutter(QWidget):
         else:
             project_save, ptype = QFileDialog.getSaveFileName(
                 parent=self.parent,
-                caption='Save project',
+                caption='保存项目',
                 directory='{}.vcp'.format(project_file),
                 filter=self.projectFilters(True),
                 initialFilter='VidCutter Project (*.vcp)',
@@ -941,7 +937,7 @@ class VideoCutter(QWidget):
         if project_save is not None and len(project_save.strip()):
             file = QFile(project_save)
             if not file.open(QFile.WriteOnly | QFile.Text):
-                QMessageBox.critical(self.parent, 'Cannot save project',
+                QMessageBox.critical(self.parent, '无法保存项目',
                                      'Cannot save project file at {0}:\n\n{1}'.format(project_save, file.errorString()))
                 return
             qApp.setOverrideCursor(Qt.WaitCursor)
@@ -968,7 +964,7 @@ class VideoCutter(QWidget):
             qApp.restoreOverrideCursor()
             self.projectSaved = True
             if not reboot:
-                self.showText('project file saved')
+                self.showText('保存项目文件')
 
     def loadMedia(self, filename: str) -> None:
         if not os.path.isfile(filename):
@@ -996,17 +992,16 @@ class VideoCutter(QWidget):
         except InvalidMediaException:
             qApp.restoreOverrideCursor()
             self.initMediaControls(False)
-            self.logger.error('Could not load media file', exc_info=True)
-            QMessageBox.critical(self.parent, 'Could not load media file',
-                                 '<h3>Invalid media file selected</h3><p>All attempts to make sense of the file have '
-                                 'failed. Try viewing it in another media player and if it plays as expected please '
-                                 'report it as a bug. Use the link in the About VidCutter menu option for details '
-                                 'and make sure to include your operating system, video card, the invalid media file '
-                                 'and the version of VidCutter you are currently using.</p>')
+            self.logger.error('无法加载媒体文件', exc_info=True)
+            QMessageBox.critical(self.parent, '无法加载媒体文件',
+                                 '<h3>选定的媒体文件无效</h3><p>所有对文件有意义的尝试都失败了， '
+                                 '请尝试在另一个媒体播放器中查看此文件，如果文件正常播放，则将其'
+                                 '视为是本软件的一个bug。请在本软件菜单选项的链接里详细描述错误情况， '
+                                 '上报当前的操作系统、视频卡、无效的媒体文件以及本软件的版本等信息。</p>')
 
     def setPlayButton(self, playing: bool=False) -> None:
         self.toolbar_play.setup('{} Media'.format('Pause' if playing else 'Play'),
-                                'Pause currently playing media' if playing else 'Play currently loaded media',
+                                '暂停播放当前媒体文件' if playing else '播放当前加载的媒体文件',
                                 True)
 
     def playMedia(self) -> None:
@@ -1084,18 +1079,18 @@ class VideoCutter(QWidget):
             self.doPass()
 
     def muteAudio(self) -> None:
-        if self.mpvWidget.property('mute'):
-            self.showText('audio enabled')
+        if self.mpvWidget.property('静音'):
+            self.showText('启用音频')
             self.muteButton.setIcon(self.unmuteIcon)
-            self.muteButton.setToolTip('Mute')
+            self.muteButton.setToolTip('静音')
         else:
-            self.showText('audio disabled')
+            self.showText('禁用音频')
             self.muteButton.setIcon(self.muteIcon)
-            self.muteButton.setToolTip('Unmute')
+            self.muteButton.setToolTip('取消静音')
         self.mpvWidget.mute()
 
     def setVolume(self, vol: int) -> None:
-        self.settings.setValue('volume', vol)
+        self.settings.setValue('音量', vol)
         if self.mediaAvailable:
             self.mpvWidget.volume(vol)
 
@@ -1104,12 +1099,12 @@ class VideoCutter(QWidget):
         self.seekSlider.showThumbs = checked
         self.saveSetting('timelineThumbs', checked)
         if checked:
-            self.showText('thumbnails enabled')
+            self.showText('启用缩略图')
             self.seekSlider.initStyle()
             if self.mediaAvailable:
                 self.seekSlider.reloadThumbs()
         else:
-            self.showText('thumbnails disabled')
+            self.showText('禁用缩略图')
             self.seekSlider.removeThumbs()
             self.seekSlider.initStyle()
 
@@ -1141,8 +1136,8 @@ class VideoCutter(QWidget):
                     exist = True
                     break
             if exist:
-                chapterswarn = VCMessageBox('Restore chapter names', 'Chapter names found in memory',
-                                            'Would you like to restore previously set chapter names?',
+                chapterswarn = VCMessageBox('恢复章节名称', '之前设置的章节名称',
+                                            '要还原之前设置的章节名称吗？ ',
                                             buttons=QMessageBox.Yes | QMessageBox.No, parent=self)
                 if chapterswarn.exec_() == QMessageBox.No:
                     for clip in self.clipTimes:
@@ -1172,13 +1167,12 @@ class VideoCutter(QWidget):
             desc = '<p>Detect video intervals that are (almost) completely black. Can be useful to detect chapter ' \
                    'transitions, commercials, or invalid recordings. You can set the minimum duration of ' \
                    'a detected black interval above to adjust the sensitivity.</p>' \
-                   '<p><b>WARNING:</b> this can take a long time to complete depending on the length and quality ' \
-                   'of the source media.</p>'
+                   '<p><b>WARNING:</b> 根据源媒体的长度和质量，这可能需要很长时间才能完成。</p> ' 
             d = VCDoubleInputDialog(self, 'BLACKDETECT - Filter settings', 'Minimum duration for black scenes:',
                                     self.filter_settings.blackdetect.default_duration,
                                     self.filter_settings.blackdetect.min_duration, 999.9, 1, 0.1, desc, 'secs')
             d.buttons.accepted.connect(
-                lambda: self.startFilters('detecting scenes (press ESC to cancel)',
+                lambda: self.startFilters('检测场景(按ESC取) ',
                                           partial(self.videoService.blackdetect, d.value), d))
             d.setFixedSize(435, d.sizeHint().height())
             d.exec_()
@@ -1607,14 +1601,13 @@ class VideoCutter(QWidget):
 
     @pyqtSlot()
     def toggleFullscreen(self) -> None:
-        #xn:return
+        return
         if self.mediaAvailable:
             pause = self.mpvWidget.property('pause')
             mute = self.mpvWidget.property('mute')
             vol = self.mpvWidget.property('volume')
             pos = self.seekSlider.value() / 1000
             if self.mpvWidget.originalParent is not None:
-                '''XN: new method, reduce screen flash. Q.SubWindow <-> Q.Window 
                 self.mpvWidget.shutdown()
                 sip.delete(self.mpvWidget)
                 del self.mpvWidget
@@ -1623,43 +1616,16 @@ class VideoCutter(QWidget):
                 self.videoplayerLayout.insertWidget(0, self.mpvWidget)
                 self.mpvWidget.originalParent = None
                 self.parent.show()
-                '''
-                self.mpvWidget.setWindowFlags(Qt.SubWindow)
-                self.videoplayerLayout.insertWidget(0, self.mpvWidget)
-                self.mpvWidget.originalParent = None
-                self.mpvWidget.showMaximized()
-               
             elif self.mpvWidget.parentWidget() != 0:
-                
-                '''XN:new method, reduce screen flash. Q.SubWindow <-> Q.Window 
                 self.parent.hide()
-                
                 self.mpvWidget.shutdown()
                 self.videoplayerLayout.removeWidget(self.mpvWidget)
                 sip.delete(self.mpvWidget)
                 del self.mpvWidget
                 self.mpvWidget = self.getMPV(file=self.currentMedia, start=pos, pause=pause, mute=mute, volume=vol)
                 self.mpvWidget.originalParent = self
-                
                 self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
-                '''
-                #self.mpvWidget.setWindowFlags(Qt.FramelessWindowHint)
-                self.mpvWidget.setWindowFlags(Qt.Window)
-            
-                self.mpvWidget.originalParent = self
-                self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
-                #print(qApp.desktop().screenGeometry(self))
-                
-                #self.mpvWidget.setGeometry(0,0,1440, 990)
-                #self.mpvWidget.resize(1440, 990)
-                self.mpvWidget.showNormal()
-                #don't show the close button to user! self.mpvWidget.showMaximized()
-                
-                #self.mpvWidget.showFullScreen()
-                pass
-                
-                
-    
+                self.mpvWidget.showFullScreen()
                 
 
     def toggleOSD(self, checked: bool) -> None:
