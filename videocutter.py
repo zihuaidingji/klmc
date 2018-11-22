@@ -358,7 +358,7 @@ class VideoCutter(QWidget):
         audioLayout.addSpacing(5)
         audioLayout.addWidget(self.fullscreenButton)
 
-        self.toolbar_open = VCToolBarButton('open 打开', '打开并加载媒体文件', parent=self)
+        self.toolbar_open = VCToolBarButton('Open 打开', '打开并加载媒体文件', parent=self)
         self.toolbar_open.clicked.connect(self.openMedia)
         self.toolbar_play = VCToolBarButton('Play 播放', '播放当前加载的媒体文件', parent=self)
         self.toolbar_play.setEnabled(False)
@@ -470,7 +470,7 @@ class VideoCutter(QWidget):
         widget = vidcutter.libs.mpvwidget.mpvWidget(
             parent=parent,
             file=file,
-            
+
             #xn gpu for windows:vo='opengl-cb',
             vo='gpu',
             #speed=100,
@@ -592,7 +592,7 @@ class VideoCutter(QWidget):
     def _filtersMenu(self) -> QMenu:
         menu = QMenu('Video filters', self)
         self.blackdetectAction = VCFilterMenuAction(QPixmap(':/images/blackdetect.png'), 'BLACKDETECT',
-                                                    'Create clips via black frame detection',
+                                                    '通过黑色帧检测创建剪辑，',
                                                     '有助于跳过广告或检测场景转换',
                                                     self)
         if sys.platform == 'darwin':
@@ -1003,12 +1003,12 @@ class VideoCutter(QWidget):
                                  '上报当前的操作系统、视频卡、无效的媒体文件以及本软件的版本等信息。</p>')
 
     def setPlayButton(self, playing: bool=False) -> None:
-        self.toolbar_play.setup('{} Media'.format('暂停' if playing else '播放'),
+        self.toolbar_play.setup('{} Media'.format('Pause' if playing else 'Play'),
                                 '暂停播放当前媒体文件' if playing else '播放当前加载的媒体文件',
                                 True)
 
     def playMedia(self) -> None:
-        playstate = self.mpvWidget.property('暂停')
+        playstate = self.mpvWidget.property('pause')
         self.setPlayButton(playstate)
         self.taskbar.setState(playstate)
         self.timeCounter.clearFocus()
@@ -1100,7 +1100,7 @@ class VideoCutter(QWidget):
     @pyqtSlot(bool)
     def toggleThumbs(self, checked: bool) -> None:
         self.seekSlider.showThumbs = checked
-        self.saveSetting('时间线缩略图', checked)
+        self.saveSetting('timelineThumbs', checked)
         if checked:
             self.showText('启用缩略图')
             self.seekSlider.initStyle()
@@ -1167,10 +1167,11 @@ class VideoCutter(QWidget):
     @pyqtSlot(VideoFilter)
     def configFilters(self, name: VideoFilter) -> None:
         if name == VideoFilter.BLACKDETECT:
-            desc = '<p>检测几乎完全是黑色的视频间隔。可用于检测章节转换、 ' \
-                   '广告或无效记录。您可以设置上面检测到的黑色间隔的最小持续时间来调整灵敏度。 .</p>' \
+            desc = '<p>Detect video intervals that are (almost) completely black. Can be useful to detect chapter ' \
+                   'transitions, commercials, or invalid recordings. You can set the minimum duration of ' \
+                   'a detected black interval above to adjust the sensitivity.</p>' \
                    '<p><b>WARNING:</b> 根据源媒体的长度和质量，这可能需要很长时间才能完成。</p> ' 
-            d = VCDoubleInputDialog(self, 'BLACKDETECT - Filter settings', '黑色场景的最小持续时间:',
+            d = VCDoubleInputDialog(self, 'BLACKDETECT - Filter settings', 'Minimum duration for black scenes:',
                                     self.filter_settings.blackdetect.default_duration,
                                     self.filter_settings.blackdetect.min_duration, 999.9, 1, 0.1, desc, 'secs')
             d.buttons.accepted.connect(
@@ -1202,7 +1203,7 @@ class VideoCutter(QWidget):
     def addExternalClips(self) -> None:
         clips, _ = QFileDialog.getOpenFileNames(
             parent=self.parent,
-            caption='添加媒体文件',
+            caption='Add media files',
             filter=self.mediaFilters(),
             initialFilter=self.mediaFilters(True),
             directory=(self.lastFolder if os.path.exists(self.lastFolder) else QDir.homePath()),
@@ -1242,7 +1243,7 @@ class VideoCutter(QWidget):
                 errordialog.setDetailedMessage(detailedmsg)
                 errordialog.show()
             if filesadded:
-                self.showText('媒体添加到索引')
+                self.showText('media added to index')
                 self.renderClipIndex()
 
     def hasExternals(self) -> bool:
@@ -1259,7 +1260,7 @@ class VideoCutter(QWidget):
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.blackdetectAction.setDisabled(True)
         self.inCut = True
-        self.showText('开始剪辑 {}'.format(starttime.toString(self.timeformat)))
+        self.showText('clip started at {}'.format(starttime.toString(self.timeformat)))
         self.renderClipIndex()
         self.cliplist.scrollToBottom()
 
@@ -1267,8 +1268,8 @@ class VideoCutter(QWidget):
         item = self.clipTimes[len(self.clipTimes) - 1]
         endtime = self.delta2QTime(self.seekSlider.value())
         if endtime.__lt__(item[0]):
-            QMessageBox.critical(self.parent, '无效结束时间',
-                                 '剪辑结束时间必须在视频播放的开始时间之后，请再试一次。')
+            QMessageBox.critical(self.parent, 'Invalid END Time',
+                                 'The clip end time must come AFTER it\'s start time. Please try again.')
             return
         item[1] = endtime
         self.toolbar_start.setEnabled(True)
@@ -1278,7 +1279,7 @@ class VideoCutter(QWidget):
         self.seekSlider.setRestrictValue(0, False)
         self.blackdetectAction.setEnabled(True)
         self.inCut = False
-        self.showText('结束剪辑 {}'.format(endtime.toString(self.timeformat)))
+        self.showText('clip ends at {}'.format(endtime.toString(self.timeformat)))
         self.renderClipIndex()
         self.cliplist.scrollToBottom()
 
@@ -1295,7 +1296,7 @@ class VideoCutter(QWidget):
         self.clipTimes.insert(index, clip)
         if not len(clip[3]):
             self.seekSlider.switchRegions(start, index)
-        self.showText('剪辑顺序更新')
+        self.showText('clip order updated')
         self.renderClipIndex()
 
     def renderClipIndex(self) -> None:
@@ -1337,11 +1338,11 @@ class VideoCutter(QWidget):
         source_file, source_ext = os.path.splitext(self.currentMedia if self.currentMedia is not None
                                                    else self.clipTimes[0][3])
         suggestedFilename = '{0}_EDIT{1}'.format(source_file, source_ext)
-        filefilter = '视频文件 (*{0})'.format(source_ext)
+        filefilter = 'Video files (*{0})'.format(source_ext)
         if clips > 0:
             self.finalFilename, _ = QFileDialog.getSaveFileName(
                 parent=self.parent,
-                caption='保存视频文件',
+                caption='Save media file',
                 directory=suggestedFilename,
                 filter=filefilter,
                 options=self.getFileDialogOptions())
@@ -1428,17 +1429,17 @@ class VideoCutter(QWidget):
             if self.createChapters:
                 chapters = []
                 [
-                    chapters.append(clip[4] if clip[4] is not None else '章节 {}'.format(index + 1))
+                    chapters.append(clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1))
                     for index, clip in enumerate(self.clipTimes)
                 ]
             if self.videoService.isMPEGcodec(filelist[0]):
-                self.logger.info('源文件是基于MPEG的，所以通过MPEG-TS加入')
+                self.logger.info('source file is MPEG based so join via MPEG-TS')
                 rc = self.videoService.mpegtsJoin(filelist, self.finalFilename, chapters)
             if not rc or QFile(self.finalFilename).size() < 1000:
-                self.logger.info('基于MPEG-TS的连接失败，将使用标准CONTAT重试 ')
+                self.logger.info('MPEG-TS based join failed, will retry using standard concat')
                 rc = self.videoService.join(filelist, self.finalFilename, True, chapters)
             if not rc or QFile(self.finalFilename).size() < 1000:
-                self.logger.info('加入导致0长度文件，再次尝试没有所有流映射 ')
+                self.logger.info('join resulted in 0 length file, trying again without all stream mapping')
                 self.videoService.join(filelist, self.finalFilename, False, chapters)
             if not self.keepClips:
                 for f in filelist:
@@ -1495,7 +1496,7 @@ class VideoCutter(QWidget):
     def mediaInfo(self) -> None:
         if self.mediaAvailable:
             if self.videoService.backends.mediainfo is None:
-                self.logger.error('在系统上找不到媒体 ')
+                self.logger.error('mediainfo could not be found on the system')
                 QMessageBox.critical(self.parent, 'Missing mediainfo utility',
                                      'The <b>mediainfo</b> command could not be found on your system which '
                                      'is required for this feature to work.<br/><br/>Linux users can simply '
@@ -1605,9 +1606,9 @@ class VideoCutter(QWidget):
     def toggleFullscreen(self) -> None:
         #xn:return
         if self.mediaAvailable:
-            pause = self.mpvWidget.property('暂停')
-            mute = self.mpvWidget.property('静音')
-            vol = self.mpvWidget.property('音量')
+            pause = self.mpvWidget.property('pause')
+            mute = self.mpvWidget.property('mute')
+            vol = self.mpvWidget.property('volume')
             pos = self.seekSlider.value() / 1000
             if self.mpvWidget.originalParent is not None:
                 '''XN: new method, reduce screen flash. Q.SubWindow <-> Q.Window 
@@ -1671,7 +1672,7 @@ class VideoCutter(QWidget):
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if self.mediaAvailable:
 
-            if event.key() == Qt.Key_Space:
+            if event.key() in {Qt.Key_Space, Qt.Key_P}: #xn: add Key_P 
                 self.playMedia()
                 return
 
@@ -1679,8 +1680,14 @@ class VideoCutter(QWidget):
                 self.toggleFullscreen()
                 return
 
-            if event.key() == Qt.Key_F:
+            if event.key() in {Qt.Key_F}:  
                 self.toggleFullscreen()
+                return
+
+            #xn: add Key_P for pause, O for OSD, [] for speed up or down
+            #xn: ;' for smaller or bigger
+            if event.key() == Qt.Key_O: 
+                self.toggleOSD(self.enableOSD)
                 return
 
             if event.key() == Qt.Key_Home:
