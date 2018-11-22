@@ -305,8 +305,18 @@ class mpvWidget(QOpenGLWidget):
                 self.parent.toggleFullscreen()
         elif self.isFullScreen():
             self.originalParent.keyPressEvent(event)
+            
+        #xn: add new shortcut key binding
+        elif event.key() in {Qt.Key_P, Qt.Key_Space}:
+            event.accept()
+            self.pause()
+
+        elif event.key() == Qt.Key_O:
+            self.option('osd-level','2')
+
         else:
             super(mpvWidget, self).keyPressEvent(event)
+            
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         event.accept()
