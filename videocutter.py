@@ -890,10 +890,10 @@ class VideoCutter(QWidget):
             qApp.restoreOverrideCursor()
             if project_file != os.path.join(QDir.tempPath(), self.parent.TEMP_PROJECT_FILE):
                 self.showText('项目加载')
+ 
 
             #xn: render clip list right now
             self.renderClipIndex()
-
 
     def saveProject(self, reboot: bool = False) -> None:
         if self.currentMedia is None:
