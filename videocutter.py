@@ -226,11 +226,13 @@ class VideoCutter(QWidget):
             self.videoLayout.addSpacing(10)
             self.videoLayout.addLayout(self.clipindexLayout)
 
+        
         self.timeCounter = VCTimeCounter(self)
         self.timeCounter.timeChanged.connect(lambda newtime: self.setPosition(newtime.msecsSinceStartOfDay()))
         self.frameCounter = VCFrameCounter(self)
         self.frameCounter.setReadOnly(True)
 
+        
         countersLayout = QHBoxLayout()
         countersLayout.setContentsMargins(0, 0, 0, 0)
         countersLayout.addStretch(1)
@@ -239,7 +241,7 @@ class VideoCutter(QWidget):
         countersLayout.addWidget(self.timeCounter)
         countersLayout.addStretch(1)
         # noinspection PyArgumentList
-        countersLayout.addWidget(QLabel('帧:', objectName='fcLabel'))
+        countersLayout.addWidget(QLabel('帧数:', objectName='fcLabel'))
         countersLayout.addWidget(self.frameCounter)
         countersLayout.addStretch(1)
 
@@ -248,12 +250,14 @@ class VideoCutter(QWidget):
         countersWidget.setContentsMargins(0, 0, 0, 0)
         countersWidget.setLayout(countersLayout)
         countersWidget.setMaximumHeight(28)
+        
 
         self.mpvWidget = self.getMPV(self)
 
         self.videoplayerLayout = QVBoxLayout()
         self.videoplayerLayout.setSpacing(0)
-        self.videoplayerLayout.setContentsMargins(0, 0, 0, 0)
+        #xn:move down 20, show whole video. self.videoplayerLayout.setContentsMargins(0, 20, 0, 0)
+        self.videoplayerLayout.setContentsMargins(0, 20, 0, 0)
         self.videoplayerLayout.addWidget(self.mpvWidget)
         self.videoplayerLayout.addWidget(countersWidget)
 
@@ -263,6 +267,7 @@ class VideoCutter(QWidget):
         self.videoplayerWidget.setLineWidth(0)
         self.videoplayerWidget.setMidLineWidth(0)
         self.videoplayerWidget.setVisible(False)
+        
         self.videoplayerWidget.setLayout(self.videoplayerLayout)
 
         # noinspection PyArgumentList
@@ -960,14 +965,19 @@ class VideoCutter(QWidget):
                     if self.createChapters:
                         chapter = '"{}"'.format(clip[4]) if clip[4] is not None else '""'
                     else:
-                        chapter = ''
+                        #xn: chapter = ''
+                        chapter = '""'
                     # noinspection PyUnresolvedReferences
                     QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
                                                                        self.delta2String(stop_time), 0, chapter)
                 else:
+                    
                     # noinspection PyUnresolvedReferences
-                    QTextStream(file) << '{0}\t{1}\t{2}\n'.format(self.delta2String(start_time),
-                                                                  self.delta2String(stop_time), 0)
+
+                    #xn:don't know why save 3 paramater not 4? QTextStream(file) << '{0}\t{1}\t{2}\n'.format(self.delta2String(start_time),
+                    #                                              self.delta2String(stop_time), 0)
+                    QTextStream(file) << '{0}\t{1}\t{2}\t{3}\n'.format(self.delta2String(start_time),
+                                                                       self.delta2String(stop_time), 0, chapter)
             qApp.restoreOverrideCursor()
             self.projectSaved = True
             if not reboot:
@@ -991,6 +1001,7 @@ class VideoCutter(QWidget):
             self.novideoWidget.hide()
             self.novideoWidget.deleteLater()
             self.videoplayerWidget.show()
+            
             self.mediaAvailable = True
         try:
             self.videoService.setMedia(self.currentMedia)
@@ -1007,7 +1018,8 @@ class VideoCutter(QWidget):
                                  '上报当前的操作系统、视频卡、无效的媒体文件以及本软件的版本等信息。</p>')
 
     def setPlayButton(self, playing: bool=False) -> None:
-        self.toolbar_play.setup('{} Media'.format('Pause' if playing else 'Play'),
+        #xn:self.toolbar_play.setup('{} Media'.format('Pause' if playing else 'Play'),
+        self.toolbar_play.setup('{} 播放'.format('Pause' if playing else 'Play'),
                                 '暂停播放当前媒体文件' if playing else '播放当前加载的媒体文件',
                                 True)
 
@@ -1355,16 +1367,21 @@ class VideoCutter(QWidget):
             file, ext = os.path.splitext(self.finalFilename)
             if len(ext) == 0 and len(source_ext):
                 self.finalFilename += source_ext
+                #xn: ffmpeg cut HKVision file failed! change output file extname to .avi is working
+                #self.finalFilename += '.avi'
+                
             self.lastFolder = QFileInfo(self.finalFilename).absolutePath()
             self.toolbar_save.setDisabled(True)
             if not os.path.isdir(self.workFolder):
                 os.mkdir(self.workFolder)
+            '''xn: didn't work
             if self.smartcut:
                 self.seekSlider.showProgress(6 if clips > 1 else 5)
                 self.parent.lock_gui(True)
                 self.videoService.smartinit(clips)
                 self.smartcutter(file, source_file, source_ext)
                 return
+            '''
             steps = 3 if clips > 1 else 2
             self.seekSlider.showProgress(steps)
             self.parent.lock_gui(True)
@@ -1375,7 +1392,9 @@ class VideoCutter(QWidget):
                     filelist.append(clip[3])
                 else:
                     duration = self.delta2QTime(clip[0].msecsTo(clip[1])).toString(self.timeformat)
+                    #xn: ffmpeg cut HKVision file failed! change output file extname to .avi is working
                     filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), source_ext)
+                    #filename = '{0}_{1}{2}'.format(file, '{0:0>2}'.format(index), '.avi')
                     if not self.keepClips:
                         filename = os.path.join(self.workFolder, os.path.basename(filename))
                     filename = QDir.toNativeSeparators(filename)
@@ -1393,6 +1412,7 @@ class VideoCutter(QWidget):
                                              .format(vidcutter.__bugreport__))
                         return
             self.joinMedia(filelist)
+            print('xn:videocutter.savemedia:filename, filelist', filename, filelist)
 
     def smartcutter(self, file: str, source_file: str, source_ext: str) -> None:
         self.smartcut_monitor = Munch(clips=[], results=[], externals=0)
