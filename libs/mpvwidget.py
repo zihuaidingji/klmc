@@ -397,8 +397,8 @@ class mpvWidget(QOpenGLWidget):
 
 ##xn: send key press to parent to process
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        qApp.sendEvent(self.parent, event)
 
+        qApp.sendEvent(self.parent, event)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         event.accept()

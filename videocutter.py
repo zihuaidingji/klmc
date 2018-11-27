@@ -177,6 +177,7 @@ class VideoCutter(QWidget):
         self.runtimeLabel.setObjectName('runtimeLabel')
         self.runtimeLabel.setToolTip('总运行时间: 00:00:00')#'total runtime: 00:00:00
         self.runtimeLabel.setStatusTip('总运行时间: 00:00:00')#'total running time: 00:00:00'
+
 ##xn:close items
 ##        self.clipindex_add = QPushButton(self)
 ##        self.clipindex_add.setObjectName('clipadd')
@@ -206,6 +207,7 @@ class VideoCutter(QWidget):
 ##        clipindexTools = QWidget(self)
 ##        clipindexTools.setObjectName('clipindextools')
 ##        clipindexTools.setLayout(clipindex_layout)
+
 
         self.clipindexLayout = QVBoxLayout()
         self.clipindexLayout.setSpacing(0)
@@ -339,8 +341,10 @@ class VideoCutter(QWidget):
         self.settingsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
-        self.streamsButton = QPushButton(self, toolTip='流媒体流', cursor=Qt.PointingHandCursor, flat=True,#'Media streams'
+
+        self.streamsButton = QPushButton(self, toolTip='流媒体', cursor=Qt.PointingHandCursor, flat=True,#'Media streams'
                                          statusTip='流媒体信息',#'Select the media streams to be included'
+
                                          objectName='streamsButton', clicked=self.selectStreams,
                                          enabled=False)
         self.streamsButton.setFixedSize(QSize(33, 32))
@@ -1686,6 +1690,7 @@ class VideoCutter(QWidget):
 ##                #self.mpvWidget.setGeometry(0,0,1440, 990)
 ##                #self.mpvWidget.resize(1440, 990)
                 self.mpvWidget.showNormal()
+
 ##                #don't show the close button to user! self.mpvWidget.showMaximized()
 ##                
 ##                #self.mpvWidget.showFullScreen()
@@ -1693,7 +1698,6 @@ class VideoCutter(QWidget):
 ##                #self.mpvWidget.setFocus()
 ##                #self.mpvWidget.setVisible()
 
-                 
     def toggleOSD(self, checked: bool) -> None:     
         self.showText('{}屏幕显示'.format('启用' if checked else '不启用'), override=True)#'on-screen display {}' 'enabled''disabled'
         self.saveSetting('enableOSD', checked)
@@ -1733,6 +1737,7 @@ class VideoCutter(QWidget):
                     zoom -= 0.5 
                     self.mpvWidget.option('video-zoom', str(zoom))
                     self.showText('缩放比例：'+ '{:.2f}'.format(2**zoom) + 'x')
+
                 return
 
             if event.key() in {Qt.Key_1, Qt.Key_2}:#lz: add Key_2 & Key_1 for  increase and decrease contrast
