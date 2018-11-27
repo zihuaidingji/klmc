@@ -819,6 +819,7 @@ class VideoCutter(QWidget):
         if filename is not None and len(filename.strip()):
             self.lastFolder = QFileInfo(filename).absolutePath()
             self.loadMedia(filename)
+        
 
     # noinspection PyUnusedLocal
     def openProject(self, checked: bool = False, project_file: str = None) -> Optional[Callable]:
@@ -1307,6 +1308,8 @@ class VideoCutter(QWidget):
         self.showText('视频于{}结束剪辑'.format(endtime.toString(self.timeformat)))#'clip ends at {}'
         self.renderClipIndex()
         self.cliplist.scrollToBottom()
+##xn:add 
+        self.seekSlider.setFocus()
 
     @pyqtSlot()
     @pyqtSlot(bool)
@@ -1724,12 +1727,12 @@ class VideoCutter(QWidget):
                 if event.key() == Qt.Key_Z and zoom < 4:
                     zoom += 0.5 
                     self.mpvWidget.option('video-zoom', str(zoom))
-                    self.showText('缩放比例：'+ str(zoom*100) + '%')
+                    self.showText('缩放比例：'+ '{:.2f}'.format(2**zoom) + 'x')
 
                 if event.key() == Qt.Key_X and zoom > -4:
                     zoom -= 0.5 
                     self.mpvWidget.option('video-zoom', str(zoom))
-                    self.showText('缩放比例：'+ str(zoom*100) + '%')
+                    self.showText('缩放比例：'+ '{:.2f}'.format(2**zoom) + 'x')
                 return
 
             if event.key() in {Qt.Key_1, Qt.Key_2}:#lz: add Key_2 & Key_1 for  increase and decrease contrast
