@@ -26,8 +26,8 @@ import os
 import sys
 
 from PyQt5.QtCore import pyqtSlot, Qt, QEvent, QModelIndex, QRect, QSize, QTime
-from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPalette, QPen, QResizeEvent
-from PyQt5.QtWidgets import (QAbstractItemView, QListWidget, QListWidgetItem, QProgressBar, QSizePolicy, QStyle,
+from PyQt5.QtGui import QColor, QFont, QIcon, QKeyEvent, QMouseEvent, QPainter, QPalette, QPen, QResizeEvent
+from PyQt5.QtWidgets import (qApp, QAbstractItemView, QListWidget, QListWidgetItem, QProgressBar, QSizePolicy, QStyle,
                              QStyledItemDelegate, QStyleFactory, QStyleOptionViewItem)
 
 from vidcutter.libs.graphicseffects import OpacityEffect
@@ -129,6 +129,11 @@ class VideoList(QListWidget):
         self.parent.seekSlider.selectRegion(-1)
         self.parent.removeItemAction.setEnabled(False)
         super(VideoList, self).clearSelection()
+
+    ##xn: add
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        qApp.sendEvent(self.parent, event)
+        
 
 
 class VideoItem(QStyledItemDelegate):

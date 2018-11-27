@@ -292,108 +292,113 @@ class mpvWidget(QOpenGLWidget):
         self.showText(' ')
         self.option('osd-align-x', 'left')
 
+##xn: send key press to parent to process
+##    def keyPressEvent(self, event: QKeyEvent) -> None:
+##        if event.key() in {Qt.Key_F, Qt.Key_Escape}:
+##            event.accept()
+##            if self.parent is None:
+##                self.originalParent.toggleFullscreen()
+##            else:
+##                self.parent.toggleFullscreen()
+##        elif self.isFullScreen():
+##            self.originalParent.keyPressEvent(event)
+##            
+##        #xn: add new shortcut key binding
+##        elif event.key() in {Qt.Key_P, Qt.Key_Space}:
+##            event.accept()
+##            self.pause()
+##
+##        
+##        elif event.key() in {Qt.Key_Z, Qt.Key_X}:
+##            #lz: add Key_Z & Key_X for zoom in & out
+##            zoom = self.property('video-zoom')
+##            print('lz:videocutter.py zoom:' ,zoom)
+##            if event.key() == Qt.Key_Z and zoom < 4:
+##                zoom += 0.5 
+##                self.option('video-zoom', str(zoom))
+##                self.showText('缩放比例：'+ str(zoom*100) + '%')
+##
+##            if event.key() == Qt.Key_X and zoom > -4:
+##                zoom -= 0.5 
+##                self.option('video-zoom', str(zoom))
+##                self.showText('缩放比例：'+ str(zoom*100) + '%')
+##        
+##        elif event.key() in {Qt.Key_1, Qt.Key_2}:#lz: add Key_2 & Key_1 for  increase and decrease contrast
+##            contrast = self.property('contrast')
+##            if event.key() == Qt.Key_2 and contrast < 100:
+##                contrast += 1 
+##                self.option('contrast', str(contrast))
+##                self.showText('对比度：'+ str(contrast))
+##
+##            if event.key() == Qt.Key_1 and contrast > -100:
+##                contrast -= 1 
+##                self.option('contrast', str(contrast))
+##                self.showText('对比度：'+ str(contrast))
+##        
+##        elif event.key() in {Qt.Key_3, Qt.Key_4}:#lz: add Key_4 & Key_3 for  increase and decrease brightness
+##            brightness = self.property('brightness')
+##            if event.key() == Qt.Key_4 and brightness < 100:
+##                brightness += 1 
+##                self.option('brightness', str(brightness))
+##                self.showText('亮度：'+ str(brightness))
+##
+##            if event.key() == Qt.Key_3 and brightness > -100:
+##                brightness -= 1 
+##                self.option('brightness', str(brightness))
+##                self.showText('亮度：'+ str(brightness))
+##        
+##        elif event.key() in {Qt.Key_A, Qt.Key_D}:#lz: add Key_D & Key_A for increase and decrease playback sp
+##            speed = self.property('speed')
+##            if event.key() == Qt.Key_D and speed < 16:
+##                speed *= 2
+##                self.option('speed', str(speed))
+##                self.showText('播放速度：'+ str(speed) +'x' )
+##
+##            if event.key() == Qt.Key_A and speed > 0.125:
+##                speed *= 0.5
+##                self.option('speed', str(speed))
+##                self.showText('播放速度：'+ str(speed) +'x' )
+##        
+##        #xn: add Key_P for pause, O for OSD, D&A for speed up or down
+##        #xn: ;' for smaller or bigger 
+##        elif event.key() == Qt.Key_O:
+##            self.parent.enableOSD = not self.parent.enableOSD
+##            self.parent.toggleOSD(self.parent.enableOSD)
+##            self.parent.osdButton.setChecked(self.parent.enableOSD)
+##
+##        elif event.key() == Qt.Key_Home:
+##            self.parent.setPosition(self.parent.seekSlider.minimum())
+##
+##        elif event.key() == Qt.Key_End:
+##            self.parent.setPosition(self.parent.seekSlider.maximum())
+##
+##        elif event.key() == Qt.Key_Left:
+##            self.frameBackStep()
+##            self.parent.setPlayButton(False)
+##
+##        elif event.key() == Qt.Key_Down:
+##            if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
+##                self.seek(-self.parent.level2Seek, 'relative+exact')
+##            else:
+##                self.seek(-self.parent.level1Seek, 'relative+exact')
+##
+##        elif event.key() == Qt.Key_Right:
+##            self.frameStep()
+##            self.parent.setPlayButton(False)
+##
+##        elif event.key() == Qt.Key_Up:
+##            if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
+##                self.seek(self.parent.level2Seek, 'relative+exact')
+##            else:
+##                self.seek(self.parent.level1Seek, 'relative+exact')
+##                
+##        else:
+##            super(mpvWidget, self).keyPressEvent(event)
+
+##xn: send key press to parent to process
     def keyPressEvent(self, event: QKeyEvent) -> None:
-        if event.key() in {Qt.Key_F, Qt.Key_Escape}:
-            event.accept()
-            if self.parent is None:
-                self.originalParent.toggleFullscreen()
-            else:
-                self.parent.toggleFullscreen()
-        elif self.isFullScreen():
-            self.originalParent.keyPressEvent(event)
-            
-        #xn: add new shortcut key binding
-        elif event.key() in {Qt.Key_P, Qt.Key_Space}:
-            event.accept()
-            self.pause()
 
-        
-        elif event.key() in {Qt.Key_Z, Qt.Key_X}:
-            #lz: add Key_Z & Key_X for zoom in & out
-            zoom = self.property('video-zoom')
-            print('lz:videocutter.py zoom:' ,zoom)
-            if event.key() == Qt.Key_Z and zoom < 4:
-                zoom += 0.5 
-                self.option('video-zoom', str(zoom))
-                self.showText('缩放比例：'+ str(zoom*100) + '%')
-
-            if event.key() == Qt.Key_X and zoom > -4:
-                zoom -= 0.5 
-                self.option('video-zoom', str(zoom))
-                self.showText('缩放比例：'+ str(zoom*100) + '%')
-        
-        elif event.key() in {Qt.Key_1, Qt.Key_2}:#lz: add Key_2 & Key_1 for  increase and decrease contrast
-            contrast = self.property('contrast')
-            if event.key() == Qt.Key_2 and contrast < 100:
-                contrast += 1 
-                self.option('contrast', str(contrast))
-                self.showText('对比度：'+ str(contrast))
-
-            if event.key() == Qt.Key_1 and contrast > -100:
-                contrast -= 1 
-                self.option('contrast', str(contrast))
-                self.showText('对比度：'+ str(contrast))
-        
-        elif event.key() in {Qt.Key_3, Qt.Key_4}:#lz: add Key_4 & Key_3 for  increase and decrease brightness
-            brightness = self.property('brightness')
-            if event.key() == Qt.Key_4 and brightness < 100:
-                brightness += 1 
-                self.option('brightness', str(brightness))
-                self.showText('亮度：'+ str(brightness))
-
-            if event.key() == Qt.Key_3 and brightness > -100:
-                brightness -= 1 
-                self.option('brightness', str(brightness))
-                self.showText('亮度：'+ str(brightness))
-        
-        elif event.key() in {Qt.Key_A, Qt.Key_D}:#lz: add Key_D & Key_A for increase and decrease playback sp
-            speed = self.property('speed')
-            if event.key() == Qt.Key_D and speed < 16:
-                speed *= 2
-                self.option('speed', str(speed))
-                self.showText('播放速度：'+ str(speed) +'x' )
-
-            if event.key() == Qt.Key_A and speed > 0.125:
-                speed *= 0.5
-                self.option('speed', str(speed))
-                self.showText('播放速度：'+ str(speed) +'x' )
-        
-        #xn: add Key_P for pause, O for OSD, D&A for speed up or down
-        #xn: ;' for smaller or bigger 
-        elif event.key() == Qt.Key_O:
-            self.parent.enableOSD = not self.parent.enableOSD
-            self.parent.toggleOSD(self.parent.enableOSD)
-            self.parent.osdButton.setChecked(self.parent.enableOSD)
-
-        elif event.key() == Qt.Key_Home:
-            self.parent.setPosition(self.parent.seekSlider.minimum())
-
-        elif event.key() == Qt.Key_End:
-            self.parent.setPosition(self.parent.seekSlider.maximum())
-
-        elif event.key() == Qt.Key_Left:
-            self.frameBackStep()
-            self.parent.setPlayButton(False)
-
-        elif event.key() == Qt.Key_Down:
-            if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                self.seek(-self.parent.level2Seek, 'relative+exact')
-            else:
-                self.seek(-self.parent.level1Seek, 'relative+exact')
-
-        elif event.key() == Qt.Key_Right:
-            self.frameStep()
-            self.parent.setPlayButton(False)
-
-        elif event.key() == Qt.Key_Up:
-            if qApp.queryKeyboardModifiers() == Qt.ShiftModifier:
-                self.seek(self.parent.level2Seek, 'relative+exact')
-            else:
-                self.seek(self.parent.level1Seek, 'relative+exact')
-                
-        else:
-            super(mpvWidget, self).keyPressEvent(event)
-            
+        qApp.sendEvent(self.parent, event)
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
         event.accept()

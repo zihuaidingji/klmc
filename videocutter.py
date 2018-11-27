@@ -178,33 +178,36 @@ class VideoCutter(QWidget):
         self.runtimeLabel.setToolTip('总运行时间: 00:00:00')#'total runtime: 00:00:00
         self.runtimeLabel.setStatusTip('总运行时间: 00:00:00')#'total running time: 00:00:00'
 
-        self.clipindex_add = QPushButton(self)
-        self.clipindex_add.setObjectName('clipadd')
-        self.clipindex_add.clicked.connect(self.addExternalClips)
-        self.clipindex_add.setToolTip('添加剪辑')#'Add clips
-        self.clipindex_add.setStatusTip('仅在现有项目或空列表中添加一个或多个文件 '
-                                        '加入文件')#'Add one or more files to an existing project or an empty list if you are only ' 'joining files'
-        self.clipindex_add.setCursor(Qt.PointingHandCursor)
-        self.clipindex_remove = QPushButton(self)
-        self.clipindex_remove.setObjectName('clipremove')
-        self.clipindex_remove.setToolTip('删除剪辑')#'Remove clips'
-        self.clipindex_remove.setStatusTip('从索引中删除剪辑')#'Remove clips from your index'
-        self.clipindex_remove.setLayoutDirection(Qt.RightToLeft)
-        self.clipindex_remove.setMenu(self.clipindex_removemenu)
-        self.clipindex_remove.setCursor(Qt.PointingHandCursor)
-        if sys.platform in {'win32', 'darwin'}:
-            self.clipindex_add.setStyle(QStyleFactory.create('Fusion'))
-            self.clipindex_remove.setStyle(QStyleFactory.create('Fusion'))
+##xn:close items
+##        self.clipindex_add = QPushButton(self)
+##        self.clipindex_add.setObjectName('clipadd')
+##        self.clipindex_add.clicked.connect(self.addExternalClips)
+##        self.clipindex_add.setToolTip('添加剪辑')#'Add clips
+##        self.clipindex_add.setStatusTip('仅在现有项目或空列表中添加一个或多个文件 '
+##                                        '加入文件')#'Add one or more files to an existing project or an empty list if you are only ' 'joining files'
+##        self.clipindex_add.setCursor(Qt.PointingHandCursor)
+##        self.clipindex_remove = QPushButton(self)
+##        self.clipindex_remove.setObjectName('clipremove')
+##        self.clipindex_remove.setToolTip('删除剪辑')#'Remove clips'
+##        self.clipindex_remove.setStatusTip('从索引中删除剪辑')#'Remove clips from your index'
+##        self.clipindex_remove.setLayoutDirection(Qt.RightToLeft)
+##        self.clipindex_remove.setMenu(self.clipindex_removemenu)
+##        self.clipindex_remove.setCursor(Qt.PointingHandCursor)
+##      
+##        if sys.platform in {'win32', 'darwin'}:
+##            self.clipindex_add.setStyle(QStyleFactory.create('Fusion'))
+##            self.clipindex_remove.setStyle(QStyleFactory.create('Fusion'))
+##
+##        clipindex_layout = QHBoxLayout()
+##        clipindex_layout.setSpacing(1)
+##        clipindex_layout.setContentsMargins(0, 0, 0, 0)
+##        clipindex_layout.addWidget(self.clipindex_add)
+##        clipindex_layout.addSpacing(1)
+##        clipindex_layout.addWidget(self.clipindex_remove)
+##        clipindexTools = QWidget(self)
+##        clipindexTools.setObjectName('clipindextools')
+##        clipindexTools.setLayout(clipindex_layout)
 
-        clipindex_layout = QHBoxLayout()
-        clipindex_layout.setSpacing(1)
-        clipindex_layout.setContentsMargins(0, 0, 0, 0)
-        clipindex_layout.addWidget(self.clipindex_add)
-        clipindex_layout.addSpacing(1)
-        clipindex_layout.addWidget(self.clipindex_remove)
-        clipindexTools = QWidget(self)
-        clipindexTools.setObjectName('clipindextools')
-        clipindexTools.setLayout(clipindex_layout)
 
         self.clipindexLayout = QVBoxLayout()
         self.clipindexLayout.setSpacing(0)
@@ -213,7 +216,7 @@ class VideoCutter(QWidget):
         self.clipindexLayout.addWidget(self.cliplist)
         self.clipindexLayout.addWidget(self.runtimeLabel)
         self.clipindexLayout.addSpacing(3)
-        self.clipindexLayout.addWidget(clipindexTools)
+##        self.clipindexLayout.addWidget(clipindexTools)
 
         self.videoLayout = QHBoxLayout()
         self.videoLayout.setContentsMargins(0, 0, 0, 0)
@@ -338,8 +341,10 @@ class VideoCutter(QWidget):
         self.settingsButton.setFixedSize(QSize(33, 32))
 
         # noinspection PyArgumentList
-        self.streamsButton = QPushButton(self, toolTip='媒体流', cursor=Qt.PointingHandCursor, flat=True,#'Media streams'
-                                         statusTip='选择要饮食的媒体流',#'Select the media streams to be included'
+
+        self.streamsButton = QPushButton(self, toolTip='流媒体', cursor=Qt.PointingHandCursor, flat=True,#'Media streams'
+                                         statusTip='流媒体信息',#'Select the media streams to be included'
+
                                          objectName='streamsButton', clicked=self.selectStreams,
                                          enabled=False)
         self.streamsButton.setFixedSize(QSize(33, 32))
@@ -818,6 +823,7 @@ class VideoCutter(QWidget):
         if filename is not None and len(filename.strip()):
             self.lastFolder = QFileInfo(filename).absolutePath()
             self.loadMedia(filename)
+        
 
     # noinspection PyUnusedLocal
     def openProject(self, checked: bool = False, project_file: str = None) -> Optional[Callable]:
@@ -900,6 +906,7 @@ class VideoCutter(QWidget):
 
             #xn: render clip list right now
             self.renderClipIndex()
+            #self.seekSlider.setFocus()
 
     def saveProject(self, reboot: bool = False) -> None:
         if self.currentMedia is None:
@@ -1279,7 +1286,7 @@ class VideoCutter(QWidget):
         self.frameCounter.lockMinimum()
         self.toolbar_start.setDisabled(True)
         self.toolbar_end.setEnabled(True)
-        self.clipindex_add.setDisabled(True)
+##xn:closed        self.clipindex_add.setDisabled(True)
         self.seekSlider.setRestrictValue(self.seekSlider.value(), True)
         self.blackdetectAction.setDisabled(True)
         self.inCut = True
@@ -1297,7 +1304,7 @@ class VideoCutter(QWidget):
         item[1] = endtime
         self.toolbar_start.setEnabled(True)
         self.toolbar_end.setDisabled(True)
-        self.clipindex_add.setEnabled(True)
+##xn:closed        self.clipindex_add.setEnabled(True)
         self.timeCounter.setMinimum()
         self.seekSlider.setRestrictValue(0, False)
         self.blackdetectAction.setEnabled(True)
@@ -1305,6 +1312,8 @@ class VideoCutter(QWidget):
         self.showText('视频于{}结束剪辑'.format(endtime.toString(self.timeformat)))#'clip ends at {}'
         self.renderClipIndex()
         self.cliplist.scrollToBottom()
+##xn:add 
+        self.seekSlider.setFocus()
 
     @pyqtSlot()
     @pyqtSlot(bool)
@@ -1676,17 +1685,18 @@ class VideoCutter(QWidget):
             
                 self.mpvWidget.originalParent = self
                 self.mpvWidget.setGeometry(qApp.desktop().screenGeometry(self))
-                #print(qApp.desktop().screenGeometry(self))
-                
-                #self.mpvWidget.setGeometry(0,0,1440, 990)
-                #self.mpvWidget.resize(1440, 990)
+##                #print(qApp.desktop().screenGeometry(self))
+##                
+##                #self.mpvWidget.setGeometry(0,0,1440, 990)
+##                #self.mpvWidget.resize(1440, 990)
                 self.mpvWidget.showNormal()
-                #don't show the close button to user! self.mpvWidget.showMaximized()
-                
-                #self.mpvWidget.showFullScreen()
-                pass
-                
-                
+
+##                #don't show the close button to user! self.mpvWidget.showMaximized()
+##                
+##                #self.mpvWidget.showFullScreen()
+##                #self.mpvWidget.hide()
+##                #self.mpvWidget.setFocus()
+##                #self.mpvWidget.setVisible()
 
     def toggleOSD(self, checked: bool) -> None:     
         self.showText('{}屏幕显示'.format('启用' if checked else '不启用'), override=True)#'on-screen display {}' 'enabled''disabled'
@@ -1721,12 +1731,13 @@ class VideoCutter(QWidget):
                 if event.key() == Qt.Key_Z and zoom < 4:
                     zoom += 0.5 
                     self.mpvWidget.option('video-zoom', str(zoom))
-                    self.showText('缩放比例：'+ str(zoom*100) + '%')
+                    self.showText('缩放比例：'+ '{:.2f}'.format(2**zoom) + 'x')
 
                 if event.key() == Qt.Key_X and zoom > -4:
                     zoom -= 0.5 
                     self.mpvWidget.option('video-zoom', str(zoom))
-                    self.showText('缩放比例：'+ str(zoom*100) + '%')
+                    self.showText('缩放比例：'+ '{:.2f}'.format(2**zoom) + 'x')
+
                 return
 
             if event.key() in {Qt.Key_1, Qt.Key_2}:#lz: add Key_2 & Key_1 for  increase and decrease contrast
