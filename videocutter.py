@@ -326,7 +326,8 @@ class VideoCutter(QWidget):
         # noinspection PyArgumentList
         self.volSlider = VCVolumeSlider(orientation=Qt.Horizontal, toolTip='音量', statusTip='调节音量',#'Volume' 'Adjust volume level'
                                         cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
-                                        maximum=130, minimumHeight=22, sliderMoved=self.setVolume)
+                                        #lz:modify maximum volume# maximum=130, minimumHeight=22, sliderMoved=self.setVolume)
+                                        maximum=100, minimumHeight=22, sliderMoved=self.setVolume)
 
         # noinspection PyArgumentList
         self.fullscreenButton = QPushButton(objectName='fullscreenButton', icon=self.fullscreenIcon, flat=True,
@@ -1126,6 +1127,9 @@ class VideoCutter(QWidget):
         self.settings.setValue('音量', vol)#'volume'
         if self.mediaAvailable:
             self.mpvWidget.volume(vol)
+            self.showText('音量：'+ str(vol))#lz: show text
+        
+            
 
     @pyqtSlot(bool)
     def toggleThumbs(self, checked: bool) -> None:
@@ -1721,7 +1725,7 @@ class VideoCutter(QWidget):
                 self.toggleFullscreen()
                 return
 
-            if event.key() in {Qt.Key_F}:  
+            if event.key() in {Qt.Key_F, Qt.Key_Escape}:  
                 self.toggleFullscreen()
                 return
 
@@ -1766,7 +1770,7 @@ class VideoCutter(QWidget):
                     self.showText('亮度：'+ str(brightness))
                 return
             
-            if event.key() in {Qt.Key_A, Qt.Key_D}:#lz: add Key_D & Key_A for increase and decrease playback sp
+            if event.key() in {Qt.Key_A, Qt.Key_D}:#lz: add Key_D & Key_A for increase and decrease playback speed
                 speed = self.mpvWidget.property('speed')
                 if event.key() == Qt.Key_D and speed < 16:
                     speed *= 2
@@ -1777,8 +1781,9 @@ class VideoCutter(QWidget):
                     speed *= 0.5
                     self.mpvWidget.option('speed', str(speed))
                     self.showText('播放速度：'+ str(speed) +'x' )
+                    
                 return
-
+            
             
             #xn: add Key_P for pause, O for OSD, D&A for speed up or down
             #xn: ;' for smaller or bigger 
@@ -1827,7 +1832,21 @@ class VideoCutter(QWidget):
                 elif self.toolbar_end.isEnabled():
                     self.clipEnd()
                 return
-
+            
+            if event.key() in {Qt.Key_9, Qt.Key_0}:#lz: add Key_0 & Key_9 for increase and decrease volume
+                volume = self.mpvWidget.property('volume')
+                if event.key() == Qt.Key_0 and volume < 100:
+                    volume += 1
+                    self.mpvWidget.option('volume', str(volume))
+                    self.showText('音量：'+ str(volume))
+                    self.volSlider.setValue(volume)
+                    
+                if event.key() == Qt.Key_9 and volume > 0:
+                    volume -= 1
+                    self.mpvWidget.option('volume', str(volume))
+                    self.showText('音量：'+ str(volume))
+                    self.volSlider.setValue(volume)
+                return
         super(VideoCutter, self).keyPressEvent(event)
 
     def showEvent(self, event: QShowEvent) -> None:
