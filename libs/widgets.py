@@ -331,7 +331,7 @@ class VCVolumeSlider(QSlider):
         super(VCVolumeSlider, self).__init__(parent, **kwargs)
         self.setObjectName('volumeslider')
         self.setFocusPolicy(Qt.NoFocus)
-        self.valueChanged.connect(self.showTooltip)
+        #lz: solve bug self.valueChanged.connect(self.showTooltip)
         self.offset = QPoint(0, -45)
         if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
