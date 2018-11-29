@@ -26,8 +26,8 @@ import os
 import sys
 
 from PyQt5.QtCore import pyqtSlot, Qt, QEvent, QModelIndex, QRect, QSize, QTime
-from PyQt5.QtGui import QColor, QFont, QIcon, QMouseEvent, QPainter, QPalette, QPen, QResizeEvent
-from PyQt5.QtWidgets import (QAbstractItemView, QListWidget, QListWidgetItem, QProgressBar, QSizePolicy, QStyle,
+from PyQt5.QtGui import QColor, QFont, QIcon, QKeyEvent, QMouseEvent, QPainter, QPalette, QPen, QResizeEvent
+from PyQt5.QtWidgets import (qApp, QAbstractItemView, QListWidget, QListWidgetItem, QProgressBar, QSizePolicy, QStyle,
                              QStyledItemDelegate, QStyleFactory, QStyleOptionViewItem)
 
 from vidcutter.libs.graphicseffects import OpacityEffect
@@ -77,7 +77,7 @@ class VideoList(QListWidget):
                 #chapterName = clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1) Maohl
                 chapterName = clip[4] if clip[4] is not None else '截图章节 {}'.format(index + 1)
             #listitem.setStatusTip('Reorder clips with mouse drag & drop or right-click menu on the clip to be moved') Maohl
-            listitem.setStatusTip('点击鼠标上下拖动截图 鼠标右键显示菜单')    
+            listitem.setStatusTip('点击鼠标上下拖动截图 鼠标右键显示菜单')   
             listitem.setTextAlignment(Qt.AlignVCenter)
             listitem.setData(Qt.DecorationRole + 1, clip[2])
             listitem.setData(Qt.DisplayRole + 1, clip[0].toString(self.parent.timeformat))
@@ -133,6 +133,11 @@ class VideoList(QListWidget):
         self.parent.removeItemAction.setEnabled(False)
         super(VideoList, self).clearSelection()
 
+    ##xn: add
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        qApp.sendEvent(self.parent, event)
+        
+
 
 class VideoItem(QStyledItemDelegate):
     def __init__(self, parent: VideoList=None):
@@ -175,7 +180,7 @@ class VideoItem(QStyledItemDelegate):
         r = option.rect.adjusted(110, 10 + offset, 0, 0)
         painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Bold))
         #painter.drawText(r, Qt.AlignLeft, 'FILENAME' if len(externalPath) else 'START') Maohl
-        painter.drawText(r, Qt.AlignLeft, 'FILENAME' if len(externalPath) else '开始')
+        painter.drawText(r, Qt.AlignLeft, 'FILENAME' if len(externalPath) else '开始时间')
         r = option.rect.adjusted(110, 23 + offset, 0, 0)
         painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
         if len(externalPath):
@@ -186,7 +191,7 @@ class VideoItem(QStyledItemDelegate):
             r = option.rect.adjusted(110, 48 + offset, 0, 0)
             painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Bold))
             #painter.drawText(r, Qt.AlignLeft, 'RUNTIME' if len(externalPath) else 'END') Maohl
-            painter.drawText(r, Qt.AlignLeft, 'RUNTIME' if len(externalPath) else '结束')
+            painter.drawText(r, Qt.AlignLeft, 'RUNTIME' if len(externalPath) else '结束时间') 
             r = option.rect.adjusted(110, 60 + offset, 0, 0)
             painter.setFont(QFont('Noto Sans', 11 if sys.platform == 'darwin' else 9, QFont.Normal))
             painter.drawText(r, Qt.AlignLeft, endtime)
