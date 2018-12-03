@@ -264,8 +264,14 @@ class VideoService(QObject):
         else:
             args = '-i "{}"'.format(source)
             result = self.cmdExec(self.backends.ffmpeg, args, True)
+            print('xn:videoservice.codecs:',result)
             vcodec = re.search(r'Stream.*Video:\s(\w+)', result).group(1)
-            acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
+
+            #xn:some clip with no sound
+            #acodec = re.search(r'Stream.*Audio:\s(\w+)', result).group(1)
+            acodec = re.search(r'Stream.*Audio:\s(\w+)', result)
+            acodec=acodec.group(1) if acodec else None
+
             return vcodec, acodec
 
     def parseMappings(self, allstreams: bool = True) -> str:
@@ -282,7 +288,9 @@ class VideoService(QObject):
     def finalize(self, source: str) -> bool:
         self.checkDiskSpace(source)
         source_file, source_ext = os.path.splitext(source)
+        #xn: ffmpeg cut HKVision file failed! change output file extname to .avi is working
         final_filename = '{0}_FINAL{1}'.format(source_file, source_ext)
+        #final_filename = '{0}_FINAL{1}'.format(source_file, '.avi')
         args = '-v error -i "{}" -map 0 -c copy -y "{}"'.format(source, final_filename)
         result = self.cmdExec(self.backends.ffmpeg, args)
         if result and os.path.exists(final_filename):
@@ -293,6 +301,10 @@ class VideoService(QObject):
     def cut(self, source: str, output: str, frametime: str, duration: str, allstreams: bool=True, vcodec: str=None,
             run: bool=True) -> Union[bool, str]:
         self.checkDiskSpace(output)
+
+        #xn: ffmpeg cut HKVision file failed! change output file extname to .avi is working
+        #output = output.split('.')[0] + '.avi'
+
         stream_map = self.parseMappings(allstreams)
         if vcodec is not None:
             encode_options = VideoService.config.encoding.get(vcodec, vcodec)
@@ -302,6 +314,7 @@ class VideoService(QObject):
             args = '-v error -ss {} -t {} -i "{}" -c copy {}-avoid_negative_ts 1 -y "{}"' \
                    .format(frametime, duration, source, stream_map, output)
         if run:
+            print('xn:videoservice.cut:args:',args)
             result = self.cmdExec(self.backends.ffmpeg, args)
             if not result or os.path.getsize(output) < 1000:
                 if allstreams:
@@ -329,6 +342,7 @@ class VideoService(QObject):
     def smartcut(self, index: int, source: str, output: str, start: float, end: float, allstreams: bool = True) -> None:
         output_file, output_ext = os.path.splitext(output)
         bisections = self.getGOPbisections(source, start, end)
+        print('xn:videoservice:bisections:', bisections)
         self.smartcut_jobs[index].output = output
         self.smartcut_jobs[index].allstreams = allstreams
         # ----------------------[ STEP 1 - start of clip if not starting on a keyframe ]-------------------------
@@ -577,7 +591,10 @@ class VideoService(QObject):
                     keyframe_times.append(timecode[:-3])
                 else:
                     keyframe_times.append(float(timecode))
-        last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        #xn:last_keyframe = self.duration().toString('h:mm:ss.zzz')
+        last_keyframe = (self.duration().hour() * 3600000 + self.duration().minute() * 60000
+                + self.duration().second() * 1000 + self.duration().msec())/1000
+
         if keyframe_times[-1] != last_keyframe:
             keyframe_times.append(last_keyframe)
         if source == self.source and not formatted_time:
@@ -586,8 +603,14 @@ class VideoService(QObject):
 
     def getGOPbisections(self, source: str, start: float, end: float) -> dict:
         keyframes = self.getKeyframes(source)
+        print('xn:videoservice:keyframes:', keyframes)
+
+        #xn:last keyframe need from 'h:mm:ss.zzz' to float
+        #keyframes[-1] = float(keyframes[-1])
+
         start_pos = bisect_left(keyframes, start)
         end_pos = bisect_left(keyframes, end)
+        
         return {
             'start': (
                 keyframes[start_pos - 1] if start_pos > 0 else keyframes[start_pos],
