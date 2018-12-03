@@ -78,7 +78,8 @@ class VideoSlider(QSlider):
         self.offset = 8
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
-        self.setStatusTip('Set clip start and end points')
+        #self.setStatusTip('Set clip start and end points') Maohl
+        self.setStatusTip('设置剪辑截图起始点')
         self.setFocusPolicy(Qt.StrongFocus)
         self.setRange(0, 0)
         self.setSingleStep(1)

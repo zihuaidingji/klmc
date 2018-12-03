@@ -44,6 +44,9 @@ import sip
 from vidcutter import resources
 from vidcutter.about import About
 from vidcutter.changelog import Changelog
+#xn:增加人脸识别
+#from vidcutter.klmc.ftest import FaceTimeMark
+
 from vidcutter.mediainfo import MediaInfo
 from vidcutter.mediastream import StreamSelector
 from vidcutter.settings import SettingsDialog
@@ -326,7 +329,8 @@ class VideoCutter(QWidget):
         # noinspection PyArgumentList
         self.volSlider = VCVolumeSlider(orientation=Qt.Horizontal, toolTip='音量', statusTip='调节音量',#'Volume' 'Adjust volume level'
                                         cursor=Qt.PointingHandCursor, value=self.parent.startupvol, minimum=0,
-                                        maximum=130, minimumHeight=22, sliderMoved=self.setVolume)
+                                        #lz:modify maximum volume# maximum=130, minimumHeight=22, sliderMoved=self.setVolume)
+                                        maximum=100, minimumHeight=22, sliderMoved=self.setVolume)
 
         # noinspection PyArgumentList
         self.fullscreenButton = QPushButton(objectName='fullscreenButton', icon=self.fullscreenIcon, flat=True,
@@ -550,7 +554,14 @@ class VideoCutter(QWidget):
         self.filtersIcon = QIcon(':/images/filters.png')
         self.mediaInfoIcon = QIcon(':/images/info.png')
         self.streamsIcon = QIcon(':/images/streams.png')
-        self.changelogIcon = QIcon(':/images/changelog.png')
+        #xn:改成KLMC self.changelogIcon = QIcon(':/images/changelog.png')
+        self.KLMCIcon = QIcon(':/images/changelog.png')
+        #xn:增加人脸识别
+        self.faceMarkIcon = QIcon(':/images/changelog.png')
+        self.carLicenseMarkIcon = QIcon(':/images/changelog.png')        
+        self.pcMarkIcon = QIcon(':/images/changelog.png')
+        self.litterMarkIcon = QIcon(':/images/changelog.png')
+        #xn--------------------------------------------------------------
         self.viewLogsIcon = QIcon(':/images/viewlogs.png')
         self.updateCheckIcon = QIcon(':/images/update.png')
         self.keyRefIcon = QIcon(':/images/keymap.png')
@@ -580,8 +591,22 @@ class VideoCutter(QWidget):
         self.saveProjectAction = QAction(self.saveProjectIcon, '保存项目文件', self, triggered=self.saveProject,#'Save project file'
                                          statusTip='将当前工作保存到项目文件中 (*.vcp or *.edl)',#'Save current work to a project file (*.vcp or *.edl)'
                                          enabled=False)
-        self.changelogAction = QAction(self.changelogIcon, '查看变更日志', self, triggered=self.viewChangelog,# 'View changelog'
-                                       statusTip='查看日志变更信息')#'View log of changes
+##xn:改成KLMC  self.changelogAction = QAction(self.changelogIcon, '查看变更日志', self, triggered=self.viewChangelog,# 'View changelog'
+##                                       statusTip='查看日志变更信息')#'View log of changes
+        self.KLMCAction = QAction(self.KLMCIcon, '关于KLMC', self, triggered=self.viewKLMC,# 'View changelog'
+                                       statusTip='KLMC视频事件，可立马查')#'View log of changes
+
+        #xn: 增加人脸识别...
+        self.faceMarkAction = QAction(self.faceMarkIcon, '人脸识别', self, triggered=self.faceMark,
+                                       statusTip='在视频中搜索认识的人脸')
+        self.carLicenseMarkAction = QAction(self.carLicenseMarkIcon, '车牌识别', self, triggered=self.carLicense,
+                                       statusTip='按照牌照搜索车辆')
+        self.pcAction = QAction(self.pcMarkIcon, '人车搜索', self, triggered=self.pcSearch,
+                                       statusTip='在视频中搜索人、车、助动车、自行车...')
+        self.litterAction = QAction(self.faceMarkIcon, '高空抛物搜索', self, triggered=self.litterMark,
+                                       statusTip='在监控视频中，查找高空抛物线索')
+        #xn:--------------------------------------
+        
         self.viewLogsAction = QAction(self.viewLogsIcon, '查看日志文件', self, triggered=VideoCutter.viewLogs,#'View log file''View log of changes'
                                       statusTip='查看应用程序的日志文件')
         self.updateCheckAction = QAction(self.updateCheckIcon, '检查更新...', self,# 'Check for updates...'
@@ -620,6 +645,13 @@ class VideoCutter(QWidget):
         self.appmenu.addAction(self.openProjectAction)
         self.appmenu.addAction(self.saveProjectAction)
         self.appmenu.addSeparator()
+        #xn: 增加人脸识别...
+        self.appmenu.addAction(self.faceMarkAction)
+        self.appmenu.addAction(self.carLicenseMarkAction)
+        self.appmenu.addAction(self.pcAction)
+        self.appmenu.addAction(self.litterAction)
+        #xn:---------------------------------------------
+
         self.appmenu.addMenu(self._filtersMenu)
         self.appmenu.addSeparator()
         self.appmenu.addAction(self.fullscreenAction)
@@ -630,9 +662,11 @@ class VideoCutter(QWidget):
         self.appmenu.addAction(self.settingsAction)
         self.appmenu.addSeparator()
         self.appmenu.addAction(self.viewLogsAction)
-        self.appmenu.addAction(self.updateCheckAction)
+        ##xn:self.appmenu.addAction(self.updateCheckAction)
         self.appmenu.addSeparator()
-        self.appmenu.addAction(self.changelogAction)
+        ##xn:self.appmenu.addAction(self.changelogAction)
+        self.appmenu.addAction(self.KLMCAction)
+
         self.appmenu.addAction(self.aboutQtAction)
         self.appmenu.addAction(self.aboutAction)
         self.appmenu.addSeparator()
@@ -1065,6 +1099,10 @@ class VideoCutter(QWidget):
         self.fullscreenAction.setEnabled(flag)
         self.seekSlider.clearRegions()
         self.blackdetectAction.setEnabled(flag)
+        #xn: 增加人脸识别
+        self.faceMarkAction.setEnabled(flag)
+        self.KLMCAction.setEnabled(flag)
+        
         if flag:
             self.seekSlider.setRestrictValue(0)
         else:
@@ -1126,6 +1164,9 @@ class VideoCutter(QWidget):
         self.settings.setValue('音量', vol)#'volume'
         if self.mediaAvailable:
             self.mpvWidget.volume(vol)
+            self.showText('音量：'+ str(vol))#lz: show text
+        
+            
 
     @pyqtSlot(bool)
     def toggleThumbs(self, checked: bool) -> None:
@@ -1632,11 +1673,152 @@ class VideoCutter(QWidget):
             num /= 1024.0
         return "%.1f %s%s" % (num, 'Y', suffix)
 
+##xn: 改成KLMC介绍
+##    @pyqtSlot()
+##    def viewChangelog(self) -> None:
+##        changelog = Changelog(self)
+##        changelog.exec_()
+##
     @pyqtSlot()
-    def viewChangelog(self) -> None:
-        changelog = Changelog(self)
-        changelog.exec_()
+    def viewKLMC(self) -> None:
+        klmc = VCMessageBox('KLMC', '<a href="http://www.klmcsh.com">KLMC可立马查</a>',
+                            'KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！\
+                             人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
+                             KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> ', parent=self)
+        OKButton = klmc.addButton('确认', QMessageBox.YesRole)
+        
+        klmc.exec_()
+        #klmc.clickedButton()
+        
 
+    #xn: 增加人脸识别...------------------
+    @pyqtSlot()
+    def faceMark(self) -> None:
+        BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>人脸识别对视频打标处理',#'Warning', 'Unsaved changes found in project'
+                                'KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！\
+                                 人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
+                                 KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。\
+                                 根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n\
+                                后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
+        OKButton = BackRun.addButton('启动', QMessageBox.YesRole)
+        NoButton = BackRun.addButton('取消', QMessageBox.RejectRole)#'Cancel'
+        BackRun.exec_()
+
+        res = BackRun.clickedButton()
+        if res == OKButton:
+            ##xn: 前台处理模式，自动打开处理后的.vcp，前台独占
+            #FaceTimeMark(self.currentMedia, 150)
+            #self.openProject(False, self.currentMedia + '.vcp')
+            ##xn：前台模式--------------------------------------
+
+            ##xn: 后台处理模式
+            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, 150)
+            print(cmd)
+            print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
+            os.system(cmd)
+            ##xn: 后台模式--------------------------------------
+
+            return True
+
+        elif res == NoButton:
+            return True, None
+    
+    @pyqtSlot()
+    def carLicense(self) -> None:
+        BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>人脸识别对视频打标处理',#'Warning', 'Unsaved changes found in project'
+                                'KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！\
+                                 人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
+                                 KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。\
+                                 根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n\
+                                后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
+        OKButton = BackRun.addButton('启动', QMessageBox.YesRole)
+        NoButton = BackRun.addButton('取消', QMessageBox.RejectRole)#'Cancel'
+        BackRun.exec_()
+
+        res = BackRun.clickedButton()
+        if res == OKButton:
+            ##xn: 前台处理模式，自动打开处理后的.vcp，前台独占
+            #FaceTimeMark(self.currentMedia, 150)
+            #self.openProject(False, self.currentMedia + '.vcp')
+            ##xn：前台模式--------------------------------------
+
+            ##xn: 后台处理模式
+            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, 150)
+            print(cmd)
+            print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
+            os.system(cmd)
+            ##xn: 后台模式--------------------------------------
+
+            return True
+
+        elif res == NoButton:
+            return True, None
+    
+    @pyqtSlot()
+    def pcSearch(self) -> None:
+        BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>人脸识别对视频打标处理',#'Warning', 'Unsaved changes found in project'
+                                'KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！\
+                                 人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
+                                 KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。\
+                                 根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n\
+                                后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
+        OKButton = BackRun.addButton('启动', QMessageBox.YesRole)
+        NoButton = BackRun.addButton('取消', QMessageBox.RejectRole)#'Cancel'
+        BackRun.exec_()
+
+        res = BackRun.clickedButton()
+        if res == OKButton:
+            ##xn: 前台处理模式，自动打开处理后的.vcp，前台独占
+            #FaceTimeMark(self.currentMedia, 150)
+            #self.openProject(False, self.currentMedia + '.vcp')
+            ##xn：前台模式--------------------------------------
+
+            ##xn: 后台处理模式
+            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, 150)
+            print(cmd)
+            print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
+            os.system(cmd)
+            ##xn: 后台模式--------------------------------------
+
+            return True
+
+        elif res == NoButton:
+            return True, None
+    
+    @pyqtSlot()
+    def litterMark(self) -> None:
+        BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>对目录中的所有视频分析处理,抓取抛物轨迹。',#'Warning', 'Unsaved changes found in project'
+                                'KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！\
+                                 人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
+                                 KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。\
+                                 根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n\
+                                后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
+        OKButton = BackRun.addButton('启动', QMessageBox.YesRole)
+        NoButton = BackRun.addButton('取消', QMessageBox.RejectRole)#'Cancel'
+        BackRun.exec_()
+
+        res = BackRun.clickedButton()
+        if res == OKButton:
+            ##xn: 前台处理模式，自动打开处理后的.vcp，前台独占
+            #FaceTimeMark(self.currentMedia, 150)
+            #self.openProject(False, self.currentMedia + '.vcp')
+            ##xn：前台模式--------------------------------------
+
+            ##xn: 后台处理模式
+            cmd = 'start /b ./klmc/klmc.exe -d {}'.format(os.path.dirname(self.currentMedia))
+            print(cmd)
+            print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
+            os.system(cmd)
+            ##xn: 后台模式--------------------------------------
+
+            return True
+
+        elif res == NoButton:
+            return True, None
+    
+ 
+    #xn:-------------------------------
+        
     @staticmethod
     @pyqtSlot()
     def viewLogs() -> None:
@@ -1721,7 +1903,7 @@ class VideoCutter(QWidget):
                 self.toggleFullscreen()
                 return
 
-            if event.key() in {Qt.Key_F}:  
+            if event.key() in {Qt.Key_F, Qt.Key_Escape}:  
                 self.toggleFullscreen()
                 return
 
@@ -1766,7 +1948,7 @@ class VideoCutter(QWidget):
                     self.showText('亮度：'+ str(brightness))
                 return
             
-            if event.key() in {Qt.Key_A, Qt.Key_D}:#lz: add Key_D & Key_A for increase and decrease playback sp
+            if event.key() in {Qt.Key_A, Qt.Key_D}:#lz: add Key_D & Key_A for increase and decrease playback speed
                 speed = self.mpvWidget.property('speed')
                 if event.key() == Qt.Key_D and speed < 16:
                     speed *= 2
@@ -1777,8 +1959,9 @@ class VideoCutter(QWidget):
                     speed *= 0.5
                     self.mpvWidget.option('speed', str(speed))
                     self.showText('播放速度：'+ str(speed) +'x' )
+                    
                 return
-
+            
             
             #xn: add Key_P for pause, O for OSD, D&A for speed up or down
             #xn: ;' for smaller or bigger 
@@ -1827,7 +2010,21 @@ class VideoCutter(QWidget):
                 elif self.toolbar_end.isEnabled():
                     self.clipEnd()
                 return
-
+            
+            if event.key() in {Qt.Key_9, Qt.Key_0}:#lz: add Key_0 & Key_9 for increase and decrease volume
+                volume = self.mpvWidget.property('volume')
+                if event.key() == Qt.Key_0 and volume < 100:
+                    volume += 1
+                    self.mpvWidget.option('volume', str(volume))
+                    self.showText('音量：'+ str(volume))
+                    self.volSlider.setValue(volume)
+                    
+                if event.key() == Qt.Key_9 and volume > 0:
+                    volume -= 1
+                    self.mpvWidget.option('volume', str(volume))
+                    self.showText('音量：'+ str(volume))
+                    self.volSlider.setValue(volume)
+                return
         super(VideoCutter, self).keyPressEvent(event)
 
     def showEvent(self, event: QShowEvent) -> None:
