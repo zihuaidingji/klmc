@@ -64,7 +64,7 @@ from vidcutter.libs.taskbarprogress import TaskbarProgress
 from vidcutter.libs.videoservice import VideoService
 from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCDoubleInputDialog, VCFilterMenuAction,
                                     VCFrameCounter, VCInputDialog, VCMessageBox, VCProgressDialog, VCTimeCounter,
-                                    VCToolBarButton, VCVolumeSlider)
+                                    VCToolBarButton, VCVolumeSlider, VCRichInputDialog)
 
 import vidcutter
 
@@ -1694,34 +1694,32 @@ class VideoCutter(QWidget):
     #xn: 增加人脸识别...------------------
     @pyqtSlot()
     def faceMark(self) -> None:
-        BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>人脸识别对视频打标处理',#'Warning', 'Unsaved changes found in project'
-                                'KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！\
-                                 人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
-                                 KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。\
-                                 根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n\
-                                后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
-        OKButton = BackRun.addButton('启动', QMessageBox.YesRole)
-        NoButton = BackRun.addButton('取消', QMessageBox.RejectRole)#'Cancel'
-        BackRun.exec_()
+       
+        desc = ('KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！'\
+                '人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n'\
+                'KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。'\
+                '根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n'\
+                '后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia))
+        
+        d = VCRichInputDialog(self, '工效统计', '对象名字:','帧数设置:',
+                                self.filter_settings.blackdetect.default_duration,
+                                '', 999.9, 1, 0.1, desc, 'secs')
 
-        res = BackRun.clickedButton()
-        if res == OKButton:
-            ##xn: 前台处理模式，自动打开处理后的.vcp，前台独占
-            #FaceTimeMark(self.currentMedia, 150)
-            #self.openProject(False, self.currentMedia + '.vcp')
-            ##xn：前台模式--------------------------------------
+        d.buttons.accepted.connect(lambda: self.cmdFoo(d))
+        d.setFixedSize(480, d.sizeHint().height())
+        d.le2.setText('150')
+        d.exec_()
 
-            ##xn: 后台处理模式
-            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, 150)
-            print(cmd)
-            print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
-            os.system(cmd)
-            ##xn: 后台模式--------------------------------------
-
-            return True
-
-        elif res == NoButton:
-            return True, None
+    def cmdFoo(self, d):
+        d.close()
+        if d.le.text() != '' :
+            cmd = 'start /b python ./klmc/ftest.py -f {} -s {} -o {}'.format(self.currentMedia, d.le2.text(), d.le.text())
+        else :
+            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, d.le2.text())
+        print(cmd)
+        print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
+        os.system(cmd)
+        
     
     @pyqtSlot()
     def carLicense(self) -> None:
@@ -1733,6 +1731,8 @@ class VideoCutter(QWidget):
                                 后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
         OKButton = BackRun.addButton('启动', QMessageBox.YesRole)
         NoButton = BackRun.addButton('取消', QMessageBox.RejectRole)#'Cancel'
+        print('lz:vidcutter.carlicense:...')
+
         BackRun.exec_()
 
         res = BackRun.clickedButton()
@@ -1742,8 +1742,7 @@ class VideoCutter(QWidget):
             #self.openProject(False, self.currentMedia + '.vcp')
             ##xn：前台模式--------------------------------------
 
-            ##xn: 后台处理模式
-            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, 150)
+            ##xn: 后台处理模式            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, 150)
             print(cmd)
             print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
             os.system(cmd)
@@ -1774,7 +1773,7 @@ class VideoCutter(QWidget):
             ##xn：前台模式--------------------------------------
 
             ##xn: 后台处理模式
-            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, 150)
+            cmd = 'start /b python ./klmc/diff.py -v {} -r {}'.format(self.currentMedia, self.mpvWidget.property('estimated-frame-number'))
             print(cmd)
             print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
             os.system(cmd)
@@ -1907,20 +1906,51 @@ class VideoCutter(QWidget):
                 self.toggleFullscreen()
                 return
 
-            if event.key() in {Qt.Key_Z, Qt.Key_X}:#lz: add Key_Z & Key_X for zoom in & out
+            if event.key() in {Qt.Key_Z, Qt.Key_X}:#lz: add Key_X & Key_Z for zoom in & out
                 zoom = self.mpvWidget.property('video-zoom')
                 print('lz:videocutter.py zoom:' ,zoom)
-                if event.key() == Qt.Key_Z and zoom < 4:
+                if event.key() == Qt.Key_X and zoom < 4:
                     zoom += 0.5 
                     self.mpvWidget.option('video-zoom', str(zoom))
                     self.showText('缩放比例：'+ '{:.2f}'.format(2**zoom) + 'x')
 
-                if event.key() == Qt.Key_X and zoom > -4:
+                if event.key() == Qt.Key_Z and zoom > -4:
                     zoom -= 0.5 
                     self.mpvWidget.option('video-zoom', str(zoom))
                     self.showText('缩放比例：'+ '{:.2f}'.format(2**zoom) + 'x')
 
                 return
+
+            if event.key() in {Qt.Key_A, Qt.Key_D}:#lz: add Key_A & Key_D for pan move on X axis
+                panX = self.mpvWidget.property('video-pan-x')
+                #print('lz:videocutter.py zoom:' ,zoom)
+                if event.key() == Qt.Key_D and panX < 1:
+                    panX += 0.1 
+                    self.mpvWidget.option('video-pan-x', str(panX))
+                    #self.showText('右平移：'+ '{:.1f}'.format(panX))
+                                  
+                if event.key() == Qt.Key_A and panX > -1:
+                    panX -= 0.1 
+                    self.mpvWidget.option('video-pan-x', str(panX))
+                    #self.showText('左平移：'+ '{:.1f}'.format(panX))
+
+                return
+
+            if event.key() in {Qt.Key_W, Qt.Key_S}:#lz: add Key_W & Key_S for pan move on Y axis
+                panY = self.mpvWidget.property('video-pan-y')
+                #print('lz:videocutter.py zoom:' ,zoom)
+                if event.key() == Qt.Key_S and panY < 1:
+                    panY += 0.1 
+                    self.mpvWidget.option('video-pan-y', str(panY))
+                    #self.showText('右平移：'+ '{:.1f}'.format(panY))
+                                  
+                if event.key() == Qt.Key_W and panY > -1:
+                    panY -= 0.1 
+                    self.mpvWidget.option('video-pan-y', str(panY))
+                    #self.showText('左平移：'+ '{:.1f}'.format(panY))
+
+                return
+            
 
             if event.key() in {Qt.Key_1, Qt.Key_2}:#lz: add Key_2 & Key_1 for  increase and decrease contrast
                 contrast = self.mpvWidget.property('contrast')
@@ -1948,14 +1978,14 @@ class VideoCutter(QWidget):
                     self.showText('亮度：'+ str(brightness))
                 return
             
-            if event.key() in {Qt.Key_A, Qt.Key_D}:#lz: add Key_D & Key_A for increase and decrease playback speed
+            if event.key() in {Qt.Key_E, Qt.Key_Q}:#lz: add Key_E & Key_Q for increase and decrease playback speed
                 speed = self.mpvWidget.property('speed')
-                if event.key() == Qt.Key_D and speed < 16:
+                if event.key() == Qt.Key_E and speed < 16:
                     speed *= 2
                     self.mpvWidget.option('speed', str(speed))
                     self.showText('播放速度：'+ str(speed) +'x' )
 
-                if event.key() == Qt.Key_A and speed > 0.125:
+                if event.key() == Qt.Key_Q and speed > 0.125:
                     speed *= 0.5
                     self.mpvWidget.option('speed', str(speed))
                     self.showText('播放速度：'+ str(speed) +'x' )
