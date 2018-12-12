@@ -1,7 +1,8 @@
 import cv2
 import os
 import argparse
-
+from PyQt5.QtWidgets import (QApplication, QWidget, QMessageBox)
+import sys
 from vidcutter.klmc.whoru import whoIsWatching
 
 
@@ -52,8 +53,6 @@ def timeStats(vcpin, cvsout):
                 e = line.find('\'', s + 2)
                 if s != -1:
                     name.append(line[s + 2 : e])
-                    print(s, e)
-                    input()
                     while True:
                         s = line.find(', \'', e)
                         
@@ -90,12 +89,6 @@ def timeStats(vcpin, cvsout):
                 if a != len(name2):
                     a += 1
 
-
-                
-                
-                
-                 
-
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument("-f", "--filename", help="视频文件")
@@ -117,3 +110,9 @@ if __name__ == '__main__':
         findOne(fileName + '.vcp',vcpout , theOne)
     csvout = fileName + 'timeStats.csv'
     timeStats(fileName + '.vcp', csvout)
+
+    app = QApplication(sys.argv)
+    BackRun = QMessageBox()
+    BackRun.setText("后台<a href='http://www.klmcsh.com'>KLMC可立马查</a>图像搜索完成! 项目文件保存在{}diff.vcp\n, 打开项目文件查看".format(fileName))
+    OKButton = BackRun.addButton('OK', QMessageBox.YesRole)
+    BackRun.exec_()
