@@ -50,15 +50,18 @@ def timeStats(vcpin, cvsout):
             for line in f1.readlines():#lz: 把f1文件的每一行逐行读取 把找到theOne的行 复制到f2文件
                 s = line.find('[\'')
                 e = line.find('\'', s + 2)
-                name.append(line[s + 2 : e])
-                while True:
-                    s = line.find(', \'', e)
-                    
-                    if s != -1:
-                        e = line.find('\'', s + 3)
-                        name.append(line[s + 3 :e])
-                    else:
-                        break
+                if s != -1:
+                    name.append(line[s + 2 : e])
+                    print(s, e)
+                    input()
+                    while True:
+                        s = line.find(', \'', e)
+                        
+                        if s != -1:
+                            e = line.find('\'', s + 3)
+                            name.append(line[s + 3 :e])
+                        else:
+                            break
             print(name)
             name2=[]#录入所有人脸识别到的人到excel
             i = 0
