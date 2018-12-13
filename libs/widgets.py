@@ -331,7 +331,7 @@ class VCVolumeSlider(QSlider):
         super(VCVolumeSlider, self).__init__(parent, **kwargs)
         self.setObjectName('volumeslider')
         self.setFocusPolicy(Qt.NoFocus)
-        self.valueChanged.connect(self.showTooltip)
+        #lz: solve bug self.valueChanged.connect(self.showTooltip)
         self.offset = QPoint(0, -45)
         if sys.platform in {'win32', 'darwin'}:
             self.setStyle(QStyleFactory.create('Fusion'))
@@ -399,7 +399,7 @@ class VCDoubleInputDialog(QDialog):
         layout.addWidget(self.buttons)
         self.setLayout(layout)
         self.setWindowTitle(title)
-
+        
     @property
     def value(self) -> float:
         return self._spinbox.value()
@@ -407,6 +407,47 @@ class VCDoubleInputDialog(QDialog):
     @value.setter
     def value(self, val: float) -> None:
         self._spinbox.setValue(val)
+
+
+class VCRichInputDialog(QDialog):#ftest的输入框
+    def __init__(self, parent: QWidget, title: str, label: str, label2: str, value: str, minval: float, maxval: float,
+                 decimals: int, step: float, desc: str=None, suffix: str=None):
+        super(VCRichInputDialog, self).__init__(parent, Qt.Dialog | Qt.WindowCloseButtonHint)
+        self.le = QLineEdit(self)
+        self.le.setStyle(QStyleFactory.create('Fusion'))
+        self.le2 = QLineEdit(self)
+        self.le2.setStyle(QStyleFactory.create('Fusion'))
+        startbutton = QPushButton('启动')
+        startbutton.setDefault(True)
+        self.buttons = QDialogButtonBox(self)
+        self.buttons.addButton(startbutton, QDialogButtonBox.AcceptRole)
+        cancelbutton = QPushButton('取消')
+        self.buttons.addButton(cancelbutton,QDialogButtonBox.RejectRole)
+        self.buttons.rejected.connect(self.close)
+        fieldlayout = QHBoxLayout()
+        fieldlayout.addWidget(QLabel(label, self))
+        fieldlayout.addWidget(self.le)
+        fieldlayout.addWidget(QLabel(label2, self))
+        fieldlayout.addWidget(self.le2)
+        layout = QVBoxLayout()
+        layout.addLayout(fieldlayout)
+        if desc is not None:
+            desc_label = QLabel(desc, self)
+            desc_label.setTextFormat(Qt.RichText)
+            desc_label.setObjectName('dialogdesc')
+            desc_label.setWordWrap(True)
+            layout.addWidget(desc_label)
+        layout.addWidget(self.buttons)
+        self.setLayout(layout)
+        self.setWindowTitle(title)
+
+    @property
+    def value(self):
+        return self.le.text()
+
+    @value.setter
+    def value(self, val) -> None:
+        self.le.setText(val)
 
 
 class VCBlinkText(QWidget):
