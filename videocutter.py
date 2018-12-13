@@ -1696,8 +1696,10 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def faceMark(self) -> None:
        
+
         desc = ('<a href="http://www.klmcsh.com">KLMC可立马查</a>是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！'\
                 '搜索时间缩短几十倍，节省人力，提高大数据利用率。\n'\
+
                 'KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。'\
                 '根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n'\
                 '后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia))
@@ -1756,6 +1758,7 @@ class VideoCutter(QWidget):
     
     @pyqtSlot()
     def pcSearch(self) -> None:
+
         desc = ('<a href="http://www.klmcsh.com">KLMC可立马查</a>是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！'\
                 '搜索时间缩短几十倍，节省人力，提高大数据利用率。\n'\
                 'KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。'\
@@ -1783,7 +1786,6 @@ class VideoCutter(QWidget):
         os.system(cmd)
         #diff = subprocess.Popen(cmd, shell=True)
         
-      
     @pyqtSlot()
     def litterMark(self) -> None:
         BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>对目录中的所有视频分析处理,抓取抛物轨迹。',#'Warning', 'Unsaved changes found in project'

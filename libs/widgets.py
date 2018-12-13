@@ -415,6 +415,7 @@ class VCRichInputDialog(QDialog):#ftest的输入框
         super(VCRichInputDialog, self).__init__(parent, Qt.Dialog | Qt.WindowCloseButtonHint)
         self.le = QLineEdit(self)
         self.le.setStyle(QStyleFactory.create('Fusion'))
+
         self.le2 = QLineEdit(self)
         self.le2.setStyle(QStyleFactory.create('Fusion'))
         startbutton = QPushButton('启动')
@@ -423,6 +424,7 @@ class VCRichInputDialog(QDialog):#ftest的输入框
         self.buttons.addButton(startbutton, QDialogButtonBox.AcceptRole)
         cancelbutton = QPushButton('取消')
         self.buttons.addButton(cancelbutton,QDialogButtonBox.RejectRole)
+
         self.buttons.rejected.connect(self.close)
         fieldlayout = QHBoxLayout()
         fieldlayout.addWidget(QLabel(label, self))

@@ -43,7 +43,7 @@ class StreamSelector(QDialog):
         self.config = service.mappings
         self.setObjectName('streamselector')
         self.setWindowModality(Qt.ApplicationModal)
-        self.setWindowTitle('Media streams - {}'.format(os.path.basename(self.parent.currentMedia)))
+        self.setWindowTitle('媒体流 - {}'.format(os.path.basename(self.parent.currentMedia)))#'Media streams - {}'
         buttons = QDialogButtonBox(QDialogButtonBox.Ok, self)
         buttons.accepted.connect(self.close)
         layout = QVBoxLayout()
@@ -73,23 +73,45 @@ class StreamSelector(QDialog):
         ratio = round(int(ratio[0]) / int(ratio[1]), 3)
         icon = QLabel('<img src=":images/{}/streams-video.png" />'.format(self.parent.theme), self)
         label = QLabel('''
-            <b>index:</b> {index}
+            <b>索引:</b> {index} 
             <br/>
-            <b>codec:</b> {codec}
+            <b>编解码器:</b> {codec}
             <br/>
-            <b>size:</b> {width} x {height}
+            <b>尺寸:</b> {width} x {height}
             &nbsp;
-            <b>ratio:</b> {ratio}
+            <b>比例:</b> {ratio}
             <br/>
-            <b>frame rate:</b> {framerate} fps
+            <b>帧速率:</b> {framerate} fps
             &nbsp;
-            <b>color format:</b> {pixfmt}'''.format(index=self.streams.video.index,
+            <b>彩色格式:</b> {pixfmt}'''.format(index=self.streams.video.index,
                                                     codec=self.streams.video.codec_long_name,
                                                     width=self.streams.video.width,
                                                     height=self.streams.video.height,
                                                     framerate='{0:.2f}'.format(framerate),
                                                     ratio='{0:.2f}'.format(ratio),
                                                     pixfmt=self.streams.video.pix_fmt), self)
+       # label = QLabel('''
+           # <b>index:</b> {index} 
+           # <br/>
+           # <b>codec:</b> {codec}
+           # <br/>
+           # <b>size:</b> {width} x {height}
+           # &nbsp;
+           # <b>ratio:</b> {ratio}
+            #<br/>
+            #<b>frame rate:</b> {framerate} fps
+            #&nbsp;
+           # <b>color format:</b> {pixfmt}'''.format(index=self.streams.video.index,
+                                                   # codec=self.streams.video.codec_long_name,
+                                                   # width=self.streams.video.width,
+                                                   # height=self.streams.video.height,
+                                                   # framerate='{0:.2f}'.format(framerate),
+                                                   # ratio='{0:.2f}'.format(ratio),
+                                                   # pixfmt=self.streams.video.pix_fmt), self)
+
+
+
+        
         label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
         videolayout = QHBoxLayout()
         videolayout.setSpacing(15)
@@ -97,7 +119,7 @@ class StreamSelector(QDialog):
         videolayout.addWidget(icon)
         videolayout.addSpacing(45)
         videolayout.addWidget(label)
-        videogroup = QGroupBox('Video')
+        videogroup = QGroupBox('视频')#'Video'
         videogroup.setLayout(videolayout)
         return videogroup
 
@@ -109,12 +131,22 @@ class StreamSelector(QDialog):
             checkbox = StreamSelectorCheckBox(stream.index, 'Toggle audio stream', self)
             icon = StreamSelectorLabel('<img src=":images/{}/streams-audio.png" />'.format(self.parent.theme),
                                        checkbox, True, self)
-            labeltext = '<b>index:</b> {}<br/>'.format(stream.index)
+            labeltext = '<b>索引:</b> {}<br/>'.format(stream.index)
             if hasattr(stream, 'tags') and hasattr(stream.tags, 'language'):
-                labeltext += '<b>language:</b> {}<br/>'.format(ISO639_2[stream.tags.language])
-            labeltext += '<b>codec:</b> {}<br/>'.format(stream.codec_long_name)
-            labeltext += '<b>channels:</b> {0} &nbsp; <b>sample rate:</b> {1:.2f} kHz' \
+                labeltext += '<b>语言:</b> {}<br/>'.format(ISO639_2[stream.tags.language])
+            labeltext += '<b>编解码器:</b> {}<br/>'.format(stream.codec_long_name)
+            labeltext += '<b>频道:</b> {0} &nbsp; <b>采样率:</b> {1:.2f} kHz' \
                          .format(stream.channels, sameplerate)
+
+
+            #labeltext = '<b>索引:</b> {}<br/>'.format(stream.index)
+            #if hasattr(stream, 'tags') and hasattr(stream.tags, 'language'):
+                #labeltext += '<b>语言:</b> {}<br/>'.format(ISO639_2[stream.tags.language])
+            #labeltext += '<b>编解码器:</b> {}<br/>'.format(stream.codec_long_name)
+            #labeltext += '<b>频道:</b> {0} &nbsp; <b>采样率:</b> {1:.2f} kHz' \
+                        # .format(stream.channels, sameplerate)
+
+                        
             label = StreamSelectorLabel(labeltext, checkbox, False, self)
             rows = audiolayout.rowCount()
             audiolayout.addWidget(checkbox, rows, 0)
@@ -125,7 +157,7 @@ class StreamSelector(QDialog):
             if self.streams.audio.index(stream) < len(self.streams.audio) - 1:
                 audiolayout.addWidget(StreamSelector.lineSeparator(), rows + 1, 0, 1, 5)
         audiolayout.setColumnStretch(4, 1)
-        audiogroup = QGroupBox('Audio')
+        audiogroup = QGroupBox('音频')#'Audio'
         if len(self.streams.audio) > 2:
             audiolayout.setSizeConstraint(QGridLayout.SetMinAndMaxSize)
             widget = QWidget(self)
@@ -188,14 +220,23 @@ class StreamSelector(QDialog):
         # warn user if all audio and/or subtitle streams are off
         if no_audio or no_subtitles:
             if no_audio and not no_subtitles:
-                warnsubtext = 'All audio streams have been deselected which will produce a file with <b>NO AUDIO</b> ' \
-                              'when you save.'
+                warnsubtext = '所有的音频流都已取消选择，当你保存时，将产生一个  ' \
+                              '<b>无音频</b>文件。'
+                #warnsubtext = 'All audio streams have been deselected which will produce a file with <b>NO AUDIO</b> ' \
+                              #'when you save.'
+                
             elif not no_audio and no_subtitles:
-                warnsubtext = 'All subtitle streams have been deselected which will produce a file with ' \
-                              '<b>NO SUBTITLES</b> when you save.'
+                warnsubtext = '所有的字幕流都已取消选择，当你保存时，将产生一个' \
+                              '<b>无字幕</b> 的文件。'
+                #warnsubtext = 'All subtitle streams have been deselected which will produce a file with ' \
+                             # '<b>NO SUBTITLES</b> when you save.'
+
             else:
-                warnsubtext = 'All audio and subtitle streams have been deselected which will produce a file ' \
-                              'with <b>NO AUDIO</b> and <b>NO SUBTITLES</b> when you save.'
+                warnsubtext = '所有音频和字幕流都已取消选择，当你保存时，将产生一个 ' \
+                              '<b>无音频</b> 和<b>无字幕</b> 的文件。'
+                #warnsubtext = 'All audio and subtitle streams have been deselected which will produce a file ' \
+                              #'with <b>NO AUDIO</b> and <b>NO SUBTITLES</b> when you save.'
+                
             warntext = '''
                 <style>
                     h2 {{
@@ -206,19 +247,41 @@ class StreamSelector(QDialog):
                 </style>
                 <table border="0" cellpadding="6" cellspacing="0" width="350">
                     <tr>
-                        <td><h2>A friendly configuration warning</h2></td>
+                        <td><h2>关于配置的友好提示</h2></td>
                     </tr>
                     <tr>
                         <td>{}</td>
                     </tr>
                     <tr>
-                        <td>Are you sure this is what you want?</td>
+                        <td>确定这是你想要的吗？</td>
                     </tr>
                 </table>'''.format('#C681D5' if self.parent.theme == 'dark' else '#642C68', warnsubtext)
-            warnmsg = QMessageBox(QMessageBox.Warning, 'Warning', warntext, parent=self)
+
+           # warntext = '''
+                #<style>
+                   # h2 {{
+                       # color: {};
+                       # font-family: "Futura LT", sans-serif;
+                       # font-weight: normal;
+                  #  }}
+                #</style>
+                #<table border="0" cellpadding="6" cellspacing="0" width="350">
+                   # <tr>
+                    #    <td><h2>A friendly configuration warning</h2></td>
+                    #</tr>
+                   # <tr>
+                    #    <td>{}</td>
+                   # </tr>
+                   # <tr>
+                    #    <td>Are you sure this is what you want?</td>
+                    #</tr>
+             #   </table>'''.format('#C681D5' if self.parent.theme == 'dark' else '#642C68', warnsubtext)
+
+            
+            warnmsg = QMessageBox(QMessageBox.Warning, '提示', warntext, parent=self)#'Warning'
             warnmsg.setIconPixmap(QPixmap(':images/warning.png'))
-            warnmsg.addButton('Yes', QMessageBox.YesRole)
-            cancelbtn = warnmsg.addButton('No', QMessageBox.RejectRole)
+            warnmsg.addButton('是', QMessageBox.YesRole)#Yes
+            cancelbtn = warnmsg.addButton('否', QMessageBox.RejectRole)#No
             warnmsg.exec_()
             res = warnmsg.clickedButton()
             if res == cancelbtn:

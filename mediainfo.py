@@ -48,7 +48,7 @@ class MediaInfo(QDialog):
         self.setObjectName('mediainfo')
         self.setContentsMargins(0, 0, 0, 0)
         self.setWindowModality(Qt.ApplicationModal)
-        self.setWindowTitle('Media information - {}'.format(os.path.basename(self.media)))
+        self.setWindowTitle('媒体信息 - {}'.format(os.path.basename(self.media)))#'Media information - {}'
         self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         self.setMinimumSize(self.modes.get(self.parent.parent.scale))
         if sys.platform in {'win32', 'darwin'}:
@@ -88,7 +88,7 @@ class MediaInfo(QDialog):
                          pencolor='#FFF' if self.parent.theme == 'dark' else '#000'))
         content.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         content.setHtml(metadata)
-        keyframesButton = QPushButton('View keyframes', self)
+        keyframesButton = QPushButton('查看关键帧', self)#'View keyframes'
         keyframesButton.clicked.connect(self.showKeyframes)
         okButton = QDialogButtonBox(QDialogButtonBox.Ok)
         okButton.accepted.connect(self.close)
@@ -97,9 +97,13 @@ class MediaInfo(QDialog):
                                                              '--version', True)
         if len(mediainfo_version) >= 2:
             mediainfo_version = mediainfo_version.split('\n')[1]
-            mediainfo_label = QLabel('<div style="font-size:11px;"><b>Media information by:</b><br/>%s @ '
+            #mediainfo_label = QLabel('<div style="font-size:11px;"><b>Media information by:</b><br/>%s @ '
+                                    # % mediainfo_version + '<a href="https://mediaarea.net" target="_blank">' +
+                                    # 'mediaarea.net</a></div>')
+            mediainfo_label = QLabel('<div style="font-size:11px;"><b>媒体信息来源:</b><br/>%s @ '
                                      % mediainfo_version + '<a href="https://mediaarea.net" target="_blank">' +
                                      'mediaarea.net</a></div>')
+            
             button_layout.addWidget(mediainfo_label)
         button_layout.addStretch(1)
         button_layout.addWidget(keyframesButton)
