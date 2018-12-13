@@ -11,7 +11,8 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QMessageBox)
 import sys
 
 #Standard pix
-Pix = (640, 360)
+Pix = (1280, 720)
+#Pix = (640, 360)
 #HD pix
 #Pix = (1920, 1080)
 #for high building
@@ -33,7 +34,7 @@ def mkdir(path):
         return False
 
 
-def frameDiff(videoName, points, min_area, threshold, path, refframe, skipFrames = 32):
+def frameDiff(videoName, points, min_area, threshold, path, refframe, startframe, skipFrames = 32):
     videoName.set(1, refframe)
     _ret, ref = videoName.read()
     ref = cv2.resize(ref, Pix, interpolation = cv2.INTER_CUBIC)
@@ -43,7 +44,7 @@ def frameDiff(videoName, points, min_area, threshold, path, refframe, skipFrames
     ref = clahe.apply(ref)
     ref = cv2.GaussianBlur(ref, (min_area, min_area), 0)
 
-    videoName.set(1, 0) #vedio position point to beginning frame 0
+    videoName.set(1, startframe) #vedio position point to beginning frame 0
     skipF = 0
     while True:
         (grabbed, frame) = videoName.read()
@@ -94,20 +95,10 @@ def frameDiff(videoName, points, min_area, threshold, path, refframe, skipFrames
             with open(path +'diff.vcp', 'w') as f:
                 f.write(path+'\n')
                 f.write('{:.6f}\x09{:.6f}\x09\x30\x09"match"\n'.format(
-                        videoName.get(0)/1000 - 0.1,        
-                        videoName.get(0)/1000 + 0.1                    
+                        videoName.get(0)/1000 ,        
+                        videoName.get(0)/1000 + 1                    
                         ))
 
-
-            app = QApplication(sys.argv)
-   
-            BackRun = QMessageBox()
-            BackRun.setText("后台<a href='http://www.klmcsh.com'>KLMC可立马查</a>图像搜索完成! 项目文件保存在{}diff.vcp\n, 打开项目文件查看".format(path))
-
-            OKButton = BackRun.addButton('OK', QMessageBox.YesRole)
-            BackRun.exec_()
-
-            #return sys.exit(app.exec_())
             return True
 
 
@@ -139,6 +130,7 @@ def getPoint(im, multi=False):
     window_name = "选择搜索区域."
     cv2.namedWindow(window_name)
     cv2.imshow(window_name, im_draw)
+    cv2.moveWindow(window_name, 66,66)
 
     # List containing top-left and bottom-right to crop the image.
     pts_1 = []
@@ -161,7 +153,7 @@ def getPoint(im, multi=False):
             print("Object selected at [{}, {}]".format(pts_1[-1], pts_2[-1]))
         elif event == cv2.EVENT_MOUSEMOVE and getPoint.mouse_down == True:
             im_draw = im.copy()
-            cv2.rectangle(im_draw, pts_1[-1], (x, y), (255,255,255), 2)
+            cv2.rectangle(im_draw, pts_1[-1], (x, y), (0, 0, 255), 2)
             cv2.imshow(window_name, im_draw)
 
     print("鼠标选择搜索区域.")
@@ -234,7 +226,8 @@ if __name__ == "__main__":
     ap.add_argument("-a", "--min_area", type=int, default=5, help="最小比对面积")
     ap.add_argument("-t", "--threshold", type=int, default=35, help="亮度阀值")
     ap.add_argument("-p", "--playback", type=int, default=False, help="显示处理窗口")
-    ap.add_argument("-r", "--refframe", type=int, help="参考帧号")
+    ap.add_argument("-r", "--refframe", type=int, help="对比帧号")
+    ap.add_argument("-s", "--startframe", type=int, help="起始帧号")
 
     args = vars(ap.parse_args())
 
@@ -250,8 +243,17 @@ if __name__ == "__main__":
     img = cv2.resize(img, Pix, interpolation = cv2.INTER_CUBIC)
     
     points = getPoint(img)
-    frameDiff(camera, points, args['min_area'], args['threshold'], file, args['refframe'], 0) #6秒比对一次图像
+    frameDiff(camera, points, args['min_area'], args['threshold'], file, args['refframe'], args['startframe'], 0) #6秒比对一次图像
     
     camera.release()
     cv2.destroyAllWindows()
 
+    app = QApplication(sys.argv)
+
+    BackRun = QMessageBox()
+    BackRun.setText("后台<a href='http://www.klmcsh.com'>KLMC可立马查</a>图像搜索完成! 项目文件保存在{}diff.vcp!".format(file))
+
+    OKButton = BackRun.addButton('OK', QMessageBox.YesRole)
+    BackRun.exec_()
+
+    #return sys.exit(app.exec_())
