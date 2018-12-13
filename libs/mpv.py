@@ -464,7 +464,7 @@ def _event_loop(event_handle, playback_cond, event_callbacks, message_handlers, 
                 name, value, _fmt = pc['name'], pc['value'], pc['format']
 
                 for handler in property_handlers[name]:
-                    print('xn:mpv:handler:name,value:', name, value)
+                    #print('xn:mpv:handler:name,value:', name, value)
                     handler(name, value)
                     
             if eid == MpvEventID.LOG_MESSAGE and log_handler is not None:
@@ -1111,7 +1111,7 @@ class MPV(object):
     def set_option(self, name, value, file_local=False):
         """Set an option value."""
         prefix = 'file-local-options/' if file_local else 'options/'
-        print("xn:mpv:set_option:",name, value)
+        #print("xn:mpv:set_option:",name, value)
         #return self._set_property(prefix+name, value)
         return _mpv_set_option_string(self.handle, name.encode('utf-8'), value.encode('utf-8'))
 

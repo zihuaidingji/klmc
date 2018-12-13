@@ -113,6 +113,8 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     BackRun = QMessageBox()
-    BackRun.setText("后台<a href='http://www.klmcsh.com'>KLMC可立马查</a>图像搜索完成! 项目文件保存在{}diff.vcp\n, 打开项目文件查看".format(fileName))
+
+    BackRun.setText("后台<a href='http://www.klmcsh.com'>KLMC可立马查</a>图像搜索完成! 项目文件保存在{}.vcp\n, 打开项目文件查看".format(fileName))
+
     OKButton = BackRun.addButton('OK', QMessageBox.YesRole)
     BackRun.exec_()

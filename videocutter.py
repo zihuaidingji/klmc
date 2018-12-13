@@ -67,6 +67,7 @@ from vidcutter.libs.widgets import (ClipErrorsDialog, VCBlinkText, VCDoubleInput
                                     VCToolBarButton, VCVolumeSlider, VCRichInputDialog)
 
 import vidcutter
+import subprocess
 
 
 class VideoCutter(QWidget):
@@ -601,8 +602,8 @@ class VideoCutter(QWidget):
                                        statusTip='在视频中搜索认识的人脸')
         self.carLicenseMarkAction = QAction(self.carLicenseMarkIcon, '车牌识别', self, triggered=self.carLicense,
                                        statusTip='按照牌照搜索车辆')
-        self.pcAction = QAction(self.pcMarkIcon, '人车搜索', self, triggered=self.pcSearch,
-                                       statusTip='在视频中搜索人、车、助动车、自行车...')
+        self.pcAction = QAction(self.pcMarkIcon, '框图搜图', self, triggered=self.pcSearch,
+                                       statusTip='在视频中框图搜图，找事件发生点！')
         self.litterAction = QAction(self.faceMarkIcon, '高空抛物搜索', self, triggered=self.litterMark,
                                        statusTip='在监控视频中，查找高空抛物线索')
         #xn:--------------------------------------
@@ -1695,8 +1696,10 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def faceMark(self) -> None:
        
-        desc = ('KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！'\
-                '人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n'\
+
+        desc = ('<a href="http://www.klmcsh.com">KLMC可立马查</a>是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！'\
+                '搜索时间缩短几十倍，节省人力，提高大数据利用率。\n'\
+
                 'KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。'\
                 '根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n'\
                 '后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia))
@@ -1725,7 +1728,7 @@ class VideoCutter(QWidget):
     def carLicense(self) -> None:
         BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>人脸识别对视频打标处理',#'Warning', 'Unsaved changes found in project'
                                 'KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！\
-                                 人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
+                                 搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
                                  KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。\
                                  根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n\
                                 后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
@@ -1755,35 +1758,34 @@ class VideoCutter(QWidget):
     
     @pyqtSlot()
     def pcSearch(self) -> None:
-        BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>人脸识别对视频打标处理',#'Warning', 'Unsaved changes found in project'
-                                'KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！\
-                                 人工搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
-                                 KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。\
-                                 根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n\
-                                后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
-        OKButton = BackRun.addButton('启动', QMessageBox.YesRole)
-        NoButton = BackRun.addButton('取消', QMessageBox.RejectRole)#'Cancel'
-        BackRun.exec_()
 
-        res = BackRun.clickedButton()
-        if res == OKButton:
-            ##xn: 前台处理模式，自动打开处理后的.vcp，前台独占
-            #FaceTimeMark(self.currentMedia, 150)
-            #self.openProject(False, self.currentMedia + '.vcp')
-            ##xn：前台模式--------------------------------------
+        desc = ('<a href="http://www.klmcsh.com">KLMC可立马查</a>是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！'\
+                '搜索时间缩短几十倍，节省人力，提高大数据利用率。\n'\
+                'KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。'\
+                '根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n'\
+                '后台处理完成后，项目文件保存在{}diff.vcp\n, 要启动吗?'.format(self.currentMedia))
+        
+        d = VCRichInputDialog(self, '框图搜图', '开始搜索帧:','对比帧:',
+                                self.filter_settings.blackdetect.default_duration,
+                                '', 999.9, 1, 0.1, desc, 'secs')
 
-            ##xn: 后台处理模式
-            cmd = 'start /b python ./klmc/diff.py -v {} -r {}'.format(self.currentMedia, self.mpvWidget.property('estimated-frame-number'))
-            print(cmd)
-            print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
-            os.system(cmd)
-            ##xn: 后台模式--------------------------------------
+        d.buttons.accepted.connect(lambda: self.cmdPCSearch(d))
+        d.setFixedSize(480, d.sizeHint().height())
+        d.le.setText('0') #默认从头开始搜
+        d.le2.setText(str(self.mpvWidget.property('estimated-frame-number')))#默认对比当前帧
+        d.exec_()
 
-            return True
-
-        elif res == NoButton:
-            return True, None
-    
+    def cmdPCSearch(self, d):
+        d.close()
+        if d.le.text() != '' :
+            cmd = 'start /b python ./klmc/diff.py -v {} -r {} -s {}'.format(self.currentMedia, d.le2.text(), d.le.text())
+        else :
+            cmd = 'start /b python ./klmc/diff.py -v {} -r {}'.format(self.currentMedia, d.le2.text())
+        print(cmd)
+        print('Tip:后台处理完成后，项目文件保存在{}diff.vcp'.format(self.currentMedia))
+        os.system(cmd)
+        #diff = subprocess.Popen(cmd, shell=True)
+        
     @pyqtSlot()
     def litterMark(self) -> None:
         BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>对目录中的所有视频分析处理,抓取抛物轨迹。',#'Warning', 'Unsaved changes found in project'
