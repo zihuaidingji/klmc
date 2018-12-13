@@ -97,6 +97,7 @@ class VideoCutter(QWidget):
         self.seekSlider.sliderMoved.connect(self.setPosition)
         self.sliderWidget = VideoSliderWidget(self, self.seekSlider)
         self.sliderWidget.setLoader(True)
+      
 
         self.taskbar = TaskbarProgress(self.parent)
 
@@ -145,6 +146,7 @@ class VideoCutter(QWidget):
         self.cliplist = VideoList(self)
         self.cliplist.customContextMenuRequested.connect(self.itemMenu)
         self.cliplist.currentItemChanged.connect(self.selectClip)
+        self.cliplist.itemClicked.connect(self.selectClip)
         self.cliplist.model().rowsInserted.connect(self.setProjectDirty)
         self.cliplist.model().rowsRemoved.connect(self.setProjectDirty)
         self.cliplist.model().rowsMoved.connect(self.setProjectDirty)
@@ -580,8 +582,8 @@ class VideoCutter(QWidget):
                                         statusTip='从列表中删除选定的剪辑', enabled=False)#'Remove selected clip from list'
         self.removeAllAction = QAction(self.removeAllIcon, '删除所有剪辑', self, triggered=self.clearList,#'Remove all clips'
                                        statusTip='从列表中删除所有剪辑 ', enabled=False)#'Remove all clips from list'
-        self.editChapterAction = QAction(self.chapterIcon, '编辑章节名称', self, triggered=self.editChapter,# 'Edit chapter name'
-                                         statusTip='编辑选定的章节名称 ', enabled=False)#'Edit the selected chapter name'
+        self.editChapterAction = QAction(self.chapterIcon, '编辑剪辑名称', self, triggered=self.editChapter,# 'Edit chapter name'
+                                         statusTip='编辑选定的剪辑名称 ', enabled=False)#'Edit the selected chapter name'
         self.streamsAction = QAction(self.streamsIcon, '媒体流', self, triggered=self.selectStreams,#'Media streams'
                                      statusTip='选择要包含的媒体流 ', enabled=False)#'Select the media streams to be included'
         self.mediainfoAction = QAction(self.mediaInfoIcon, '媒体信息', self, triggered=self.mediaInfo,#'Media information'
@@ -1696,10 +1698,8 @@ class VideoCutter(QWidget):
     @pyqtSlot()
     def faceMark(self) -> None:
        
-
         desc = ('<a href="http://www.klmcsh.com">KLMC可立马查</a>是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！'\
                 '搜索时间缩短几十倍，节省人力，提高大数据利用率。\n'\
-
                 'KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。'\
                 '根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n'\
                 '后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia))
@@ -1758,7 +1758,6 @@ class VideoCutter(QWidget):
     
     @pyqtSlot()
     def pcSearch(self) -> None:
-
         desc = ('<a href="http://www.klmcsh.com">KLMC可立马查</a>是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！'\
                 '搜索时间缩短几十倍，节省人力，提高大数据利用率。\n'\
                 'KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。'\
@@ -1786,6 +1785,7 @@ class VideoCutter(QWidget):
         os.system(cmd)
         #diff = subprocess.Popen(cmd, shell=True)
         
+      
     @pyqtSlot()
     def litterMark(self) -> None:
         BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>对目录中的所有视频分析处理,抓取抛物轨迹。',#'Warning', 'Unsaved changes found in project'
