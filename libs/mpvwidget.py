@@ -212,9 +212,9 @@ class mpvWidget(QOpenGLWidget):
 ##                    pc = event['event']
 ##                    name, value, _fmt = pc['name'], pc['value'], pc['format']
                 
-                print('XN:mpvwidget:eventHandler:pc:',name, value)                
+                print('XN:mpvwidget:eventHandler:pc:',name, value, self.property('estimated-frame-number'))                
                 if name == 'eof-reached' and value:
-                    #xn: open this line will down at the EOF!
+                    #xn: open this line will CRASH at the EOF!
                     self.parent.playMedia()
                     #self.parent.setPlayButton(False)
                     self.parent.setPosition(0)
