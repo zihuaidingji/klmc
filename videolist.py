@@ -69,15 +69,15 @@ class VideoList(QListWidget):
                 self.parent.totalRuntime += clip[0].msecsTo(clip[1])
             listitem = QListWidgetItem(self)
             #listitem.setToolTip('Drag to reorder clips') Maohl
-            listitem.setToolTip('上下拖动截图')
+            listitem.setToolTip('上下拖动视频剪辑')
             if len(clip[3]):
                 listitem.setToolTip(clip[3])
                 externalCount += 1
             if self.parent.createChapters:
                 #chapterName = clip[4] if clip[4] is not None else 'Chapter {}'.format(index + 1) Maohl
-                chapterName = clip[4] if clip[4] is not None else '截图章节 {}'.format(index + 1)
+                chapterName = clip[4] if clip[4] is not None else '视频剪辑 {}'.format(index + 1)
             #listitem.setStatusTip('Reorder clips with mouse drag & drop or right-click menu on the clip to be moved') Maohl
-            listitem.setStatusTip('点击鼠标上下拖动截图 鼠标右键显示菜单')   
+            listitem.setStatusTip('点击鼠标上下拖动视频剪辑，鼠标右键显示菜单。')   
             listitem.setTextAlignment(Qt.AlignVCenter)
             listitem.setData(Qt.DecorationRole + 1, clip[2])
             listitem.setData(Qt.DisplayRole + 1, clip[0].toString(self.parent.timeformat))

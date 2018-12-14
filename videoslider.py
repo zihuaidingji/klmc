@@ -79,7 +79,7 @@ class VideoSlider(QSlider):
         self.setOrientation(Qt.Horizontal)
         self.setObjectName('videoslider')
         #self.setStatusTip('Set clip start and end points') Maohl
-        self.setStatusTip('设置剪辑截图起始点')
+        self.setStatusTip('设置剪辑起始点')
         self.setFocusPolicy(Qt.StrongFocus)
         self.setRange(0, 0)
         self.setSingleStep(1)
@@ -249,16 +249,19 @@ class VideoSlider(QSlider):
         thumbsize = QSize(
             VideoService.config.thumbnails['TIMELINE'].height() * (framesize.width() / framesize.height()),
             VideoService.config.thumbnails['TIMELINE'].height())
-        positions, frametimes = ['12'], ['12']
+
+        #xn: error parameter, positions, frametimes = ['12'], ['12']
+        positions, frametimes = [], []
         thumbs = int(math.ceil((self.rect().width() - (self.offset * 2)) / thumbsize.width()))
         for pos in range(thumbs):
             val = QStyle.sliderValueFromPosition(self.minimum(), self.maximum(),
                                                  (thumbsize.width() * pos) - self.offset,
                                                  self.rect().width() - (self.offset * 2))
             positions.append(val)
-        positions[0] = 1000
+        #xn: no use, positions[0] = 1000
         [frametimes.append(self.parent.delta2QTime(msec).toString(self.parent.timeformat)) for msec in positions]
 
+        #print('xn:videoslider.initThubms:framesize, thumbsize, thumbs',framesize, thumbsize, thumbs, positions, frametimes)
         class ThumbWorker(QObject):
             completed = pyqtSignal(list)
 
