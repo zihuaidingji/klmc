@@ -60,7 +60,7 @@ class ConsoleWidget(QDialog):
         self.edit = VideoConsole(self)
         buttons = QDialogButtonBox()
         buttons.setCenterButtons(True)
-        clearButton = buttons.addButton('Clear', QDialogButtonBox.ResetRole)
+        clearButton = buttons.addButton('清除', QDialogButtonBox.ResetRole)#'Clear'
         clearButton.clicked.connect(self.edit.clear)
         closeButton = buttons.addButton(QDialogButtonBox.Close)
         closeButton.clicked.connect(self.close)
@@ -69,7 +69,7 @@ class ConsoleWidget(QDialog):
         layout.addWidget(self.edit)
         layout.addWidget(buttons)
         self.setLayout(layout)
-        self.setWindowTitle('{0} Console'.format(qApp.applicationName()))
+        self.setWindowTitle('{0} 控制台'.format(qApp.applicationName()))#'{0} Console'
         self.setWindowModality(Qt.NonModal)
 
     def showEvent(self, event: QShowEvent):
