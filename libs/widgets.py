@@ -173,7 +173,6 @@ class VCFrameCounter(QWidget):
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.currentframe)
-        layout.addWidget(separator)
         layout.addWidget(self.framecount)
         self.setLayout(layout)
 
@@ -188,6 +187,10 @@ class VCFrameCounter(QWidget):
 
     def setFrame(self, frame: int) -> None:
         self.currentframe.setValue(frame)
+
+    #xn:add 
+    def isMaxFrame(self) -> int:
+        return  (self.currentframe.maximum() - self.currentframe.value())
 
     def setFrameCount(self, count: int) -> None:
         self.framecount.setText(str(count))

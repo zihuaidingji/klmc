@@ -214,13 +214,18 @@ class mpvWidget(QOpenGLWidget):
                 
                 print('XN:mpvwidget:eventHandler:pc:',name, value, self.property('estimated-frame-number'))                
                 if name == 'eof-reached' and value:
-                    #xn: open this line will CRASH at the EOF!
+                    self.parent.EOF_reached = 123
                     self.parent.playMedia()
-                    #self.parent.setPlayButton(False)
+##                    #xn: open under lines will CRASH at the EOF!
+##                    try:
+##                        self.parent.setPlayButton(False)
+##                    except:
+##                        print('xn:mpvwidget:setPlayButton failed!')
                     self.parent.setPosition(0)
-                elif name == 'time-pos':
+                elif name == 'time-pos' and value:
+                    self.parent.EOF_reached = False
                     self.positionChanged.emit(value, self.property('estimated-frame-number'))
-                elif name == 'duration':
+                elif name == 'duration' and value:
                     self.durationChanged.emit(value, self.property('estimated-frame-count'))
                 
             except mpv.MPVError as e:
