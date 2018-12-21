@@ -173,6 +173,7 @@ class VCFrameCounter(QWidget):
         layout = QHBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.currentframe)
+        layout.addWidget(separator)
         layout.addWidget(self.framecount)
         self.setLayout(layout)
 
