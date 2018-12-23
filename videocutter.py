@@ -89,6 +89,7 @@ class VideoCutter(QWidget):
         self.projectDirty, self.projectSaved, self.debugonstart = False, False, False
         self.smartcut_monitor, self.notify = None, None
         self.fonts = []
+        self.EOF_reached = False
 
         self.initTheme()
         self.updater = Updater(self.parent)
@@ -602,8 +603,8 @@ class VideoCutter(QWidget):
         #xn: 增加人脸识别...
         self.faceMarkAction = QAction(self.faceMarkIcon, '人脸识别', self, triggered=self.faceMark,
                                        statusTip='在视频中搜索认识的人脸')
-        self.carLicenseMarkAction = QAction(self.carLicenseMarkIcon, '车牌识别', self, triggered=self.carLicense,
-                                       statusTip='按照牌照搜索车辆')
+        self.carLicenseMarkAction = QAction(self.carLicenseMarkIcon, '人车搜索', self, triggered=self.carLicense,
+                                       statusTip='搜索视频中的人和车')
         self.pcAction = QAction(self.pcMarkIcon, '框图搜图', self, triggered=self.pcSearch,
                                        statusTip='在视频中框图搜图，找事件发生点！')
         self.litterAction = QAction(self.faceMarkIcon, '高空抛物搜索', self, triggered=self.litterMark,
@@ -1716,9 +1717,9 @@ class VideoCutter(QWidget):
     def cmdFoo(self, d):
         d.close()
         if d.le.text() != '' :
-            cmd = 'start /b python ./klmc/ftest.py -f {} -s {} -o {}'.format(self.currentMedia, d.le2.text(), d.le.text())
+            cmd = 'start /b ./klmc/dist/klmctools -n ftest -f {} -s {} -o {}'.format(self.currentMedia, d.le2.text(), d.le.text())
         else :
-            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, d.le2.text())
+            cmd = 'start /b ./klmc/dist/klmctools -n ftest -f {} -s {}'.format(self.currentMedia, d.le2.text())
         print(cmd)
         print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
         os.system(cmd)
@@ -1726,16 +1727,14 @@ class VideoCutter(QWidget):
     
     @pyqtSlot()
     def carLicense(self) -> None:
-        BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>人脸识别对视频打标处理',#'Warning', 'Unsaved changes found in project'
+        BackRun = VCMessageBox('提示', '在后台启动<a href="http://www.klmcsh.com">KLMC可立马查</a>对视频打标处理',#'Warning', 'Unsaved changes found in project'
                                 'KLMC可立马查是使用AI人工智能技术和CV计算机视觉技术，快速分析搜索视频中的关键内容的一系列高效工具！\
                                  搜索时间缩短几十倍，节省人力，提高大数据利用率。\n\
                                  KLMC 最新发布的工具请关注 <a href="http://www.klmcsh.com">http://www.klmcsh.com</a> 。\
                                  根据视频长度和电脑性能的不同，后台处理过程需要几分钟到几小时，\n\
-                                后台处理完成后，项目文件保存在{}.vcp\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
+                                后台处理完成后，项目文件保存在{}RCB.AVI\n, 要启动吗?'.format(self.currentMedia), parent=self)#'Would you like to save your project?'
         OKButton = BackRun.addButton('启动', QMessageBox.YesRole)
-        NoButton = BackRun.addButton('取消', QMessageBox.RejectRole)#'Cancel'
-        print('lz:vidcutter.carlicense:...')
-
+        NoButton = BackRun.addButton('取消', QMessageBox.RejectRole)
         BackRun.exec_()
 
         res = BackRun.clickedButton()
@@ -1745,9 +1744,10 @@ class VideoCutter(QWidget):
             #self.openProject(False, self.currentMedia + '.vcp')
             ##xn：前台模式--------------------------------------
 
-            ##xn: 后台处理模式            cmd = 'start /b python ./klmc/ftest.py -f {} -s {}'.format(self.currentMedia, 150)
+            ##xn: 后台处理模式
+            cmd = 'start /b ./klmc/dist/klmctools -n klmcrcb -f {}'.format(self.currentMedia)
             print(cmd)
-            print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
+            print('Tip:后台处理完成后，项目文件保存在{}RCB.AVI'.format(self.currentMedia))
             os.system(cmd)
             ##xn: 后台模式--------------------------------------
 
@@ -1777,9 +1777,10 @@ class VideoCutter(QWidget):
     def cmdPCSearch(self, d):
         d.close()
         if d.le.text() != '' :
-            cmd = 'start /b python ./klmc/diff.py -v {} -r {} -s {}'.format(self.currentMedia, d.le2.text(), d.le.text())
+            cmd = 'start /b ./klmc/dist/klmctools -n diff -f {} -r {} -b {}'.format(self.currentMedia, d.le2.text(), d.le.text())
         else :
-            cmd = 'start /b python ./klmc/diff.py -v {} -r {}'.format(self.currentMedia, d.le2.text())
+            #cmd = 'start /b python ./klmc/diff.py -v {} -r {}'.format(self.currentMedia, d.le2.text())
+            cmd = 'start /b ./klmc/dist/klmctools -n diff -f {} -r {}'.format(self.currentMedia, d.le2.text())
         print(cmd)
         print('Tip:后台处理完成后，项目文件保存在{}diff.vcp'.format(self.currentMedia))
         os.system(cmd)
@@ -1806,7 +1807,7 @@ class VideoCutter(QWidget):
             ##xn：前台模式--------------------------------------
 
             ##xn: 后台处理模式
-            cmd = 'start /b ./klmc/klmc.exe -d {}'.format(os.path.dirname(self.currentMedia))
+            cmd = 'start /b ./klmc/dist/klmctools -n klmc -d {}'.format(os.path.dirname(self.currentMedia))
             print(cmd)
             print('Tip:后台处理完成后，项目文件保存在{}.vcp'.format(self.currentMedia))
             os.system(cmd)
@@ -2023,9 +2024,11 @@ class VideoCutter(QWidget):
                     self.mpvWidget.seek(-self.level1Seek, 'relative+exact')
                 return
 
-            if event.key() == Qt.Key_Right:
-                self.mpvWidget.frameStep()
+            if event.key() == Qt.Key_Right and (self.frameCounter.isMaxFrame() > 3):
+                #print('xn:videocutter.isMaxFrame:',self.frameCounter.isMaxFrame() )
                 self.setPlayButton(False)
+                self.mpvWidget.frameStep()
+      
                 return
 
             if event.key() == Qt.Key_Up:
